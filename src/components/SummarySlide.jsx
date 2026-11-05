@@ -5,11 +5,12 @@ import {
   Layers,
   Award,
   Users,
+  User,
   CheckCircle,
   ExternalLink,
   BookOpen,
 } from 'lucide-react';
-import MathFormula from './MathFormula';
+import MathFormula, { LatexRenderer } from './MathFormula';
 import { SUMMARY_TABLE, CONCLUSIONS, TEAM_MEMBERS } from '../data/slidesContent';
 
 export default function SummarySlide({ onRestart }) {
@@ -19,9 +20,15 @@ export default function SummarySlide({ onRestart }) {
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-8">
       {/* Header del resumen */}
       <div className="text-center space-y-2 border-b border-slate-800 pb-5">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-xs uppercase tracking-wider">
-          <Award className="w-3.5 h-3.5" />
-          <span>Síntesis y Marco de Referencia</span>
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-xs uppercase tracking-wider">
+            <Award className="w-3.5 h-3.5" />
+            <span>Diapositiva 09 &middot; Síntesis y Marco de Referencia</span>
+          </div>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-mono text-xs font-semibold shadow-sm">
+            <User className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Expositor: Benjamín Quispe</span>
+          </span>
         </div>
         <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
           Tabla Resumen de Propiedades y Conclusiones
@@ -85,7 +92,7 @@ export default function SummarySlide({ onRestart }) {
                       <MathFormula tex={row.freqDomain} />
                     </td>
                     <td className="py-3 px-4 text-slate-300 text-xs leading-relaxed max-w-md">
-                      {row.telecomImpact}
+                      <LatexRenderer text={row.telecomImpact} />
                     </td>
                   </tr>
                 );
@@ -114,12 +121,12 @@ export default function SummarySlide({ onRestart }) {
                     {concl.tag}
                   </span>
                   <span className="font-mono text-xs font-semibold text-emerald-400">
-                    {concl.highlight}
+                    <LatexRenderer text={concl.highlight} />
                   </span>
                 </div>
                 <h3 className="text-sm font-bold text-white mb-2">{concl.title}</h3>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  {concl.description}
+                  <LatexRenderer text={concl.description} />
                 </p>
               </div>
             </div>
@@ -131,18 +138,21 @@ export default function SummarySlide({ onRestart }) {
       <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-md">
         <div className="flex items-center gap-2 mb-3 text-xs font-mono uppercase tracking-wider text-cyan-400 font-bold">
           <Users className="w-4 h-4" />
-          <span>Créditos del Proyecto &middot; Grupo de Trabajo</span>
+          <span>Distribución y Asignación de Expositores</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {TEAM_MEMBERS.map((m) => (
             <div
               key={m.id}
-              className="flex items-center gap-2.5 p-2 rounded-lg bg-slate-950/60 border border-slate-800/80 text-xs text-slate-300"
+              className="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-950/60 border border-slate-800/80 text-xs text-slate-300"
             >
               <span className="font-mono text-[10px] text-cyan-400 font-bold px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">
                 {m.id}
               </span>
-              <span className="truncate">{m.name}</span>
+              <div className="min-w-0 flex-1">
+                <div className="text-slate-200 font-medium truncate">{m.name}</div>
+                <div className="text-[11px] text-emerald-400 font-mono truncate">{m.role}</div>
+              </div>
             </div>
           ))}
         </div>
@@ -161,4 +171,3 @@ export default function SummarySlide({ onRestart }) {
     </div>
   );
 }
-

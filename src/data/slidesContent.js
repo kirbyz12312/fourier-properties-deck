@@ -5,16 +5,16 @@
  */
 
 export const TEAM_MEMBERS = [
-  { id: '01', name: 'Gutierrez Barrionuevo, Henry Andre', role: 'DSP & Análisis Espectral' },
-  { id: '02', name: 'Gutierrez Ccolqque, Franco Arturo', role: 'Sistemas LTI & Convolución' },
-  { id: '03', name: 'Quispe Flores, Benjamín Eduardo', role: 'Modulación RF & Multiplexación' },
-  { id: '04', name: 'Quispe Yncarroque, Alex Cesar', role: 'Canales Inalámbricos & Retardo' },
-  { id: '05', name: 'Uturunco Cuela, Zaul Francisco', role: 'Filtrado Digital & Ecualización' },
-  { id: '06', name: 'Villalta Checalla, Gianluigi Jeremy', role: 'Modelado Teórico & Síntesis' },
+  { id: '01', name: 'Gutierrez Barrionuevo, Henry Andre', role: 'Introducción & Linealidad' },
+  { id: '02', name: 'Gutierrez Ccolqque, Franco Arturo', role: 'Desplazamiento Temporal' },
+  { id: '03', name: 'Uturunco Cuela, Zaul Francisco', role: 'Escalamiento e Inversión' },
+  { id: '04', name: 'Quispe Yncarroque, Alex Cesar', role: 'Desplazamiento Frecuencial' },
+  { id: '05', name: 'Villalta Checalla, Gianluigi Jeremy', role: 'Teorema de Convolución' },
+  { id: '06', name: 'Quispe Flores, Benjamín Eduardo', role: 'Derivación & Conclusiones' },
 ];
 
 export const SLIDES_DATA = [
-  // Diapositiva 1 se gestiona en CoverSlide
+  // Diapositiva 1
   {
     id: 1,
     title: 'Portada',
@@ -25,11 +25,13 @@ export const SLIDES_DATA = [
   {
     id: 2,
     number: '02',
+    speaker: 'Henry Gutierrez',
+    speakerFull: 'Gutierrez Barrionuevo, Henry Andre',
     title: 'Transformada Directa e Inversa de Fourier',
     shortTitle: 'Definición & Dualidad',
     badge: 'Fundamento Matemático',
     physicalInterpretation:
-      'La Transformada de Fourier descompone cualquier señal temporal física en una superposición continua de oscilaciones sinusoidales ortogonales complejas (fasores), revelando su distribución de energía o potencia por unidad de frecuencia.',
+      'La Transformada de Fourier descompone una señal física temporal $x(t)$ en una superposición continua de fasores ortogonales $e^{j2\\pi ft}$, obteniendo su densidad espectral $X(f)$. Permite transitar biunívocamente entre el tiempo y la frecuencia sin pérdida de información.',
     formulaTex:
       'X(f) = \\int_{-\\infty}^{\\infty} x(t) e^{-j2\\pi ft} \\, dt \\quad \\Longleftrightarrow \\quad x(t) = \\int_{-\\infty}^{\\infty} X(f) e^{j2\\pi ft} \\, df',
     formulaSecondaryTex:
@@ -44,6 +46,8 @@ export const SLIDES_DATA = [
       chart2XAxis: 'Frecuencia (Hz)',
       chart2YAxis: 'Magnitud |X(f)|',
     },
+    graphAnalysis:
+      'En el dominio del tiempo se observa una oscilación sinusoidal periódica pura de 50 Hz con período T = 20 ms. Al aplicar la FFT (algoritmo implementado en MATLAB y Python a fs = 1000 Hz), el espectro unilateral concentra el 100% de la energía en una única delta de Dirac situada exactamente en f = 50.0 Hz con amplitud de 1.0 V, mientras que todas las demás frecuencias permanecen en cero estricto.',
     matlabCode: `% Definición y cálculo de la Transformada Directa (FFT)
 fs = 1000;            % Frecuencia de muestreo (Hz)
 T = 1/fs;             % Período de muestreo (s)
@@ -107,11 +111,13 @@ plt.show()`,
   {
     id: 3,
     number: '03',
+    speaker: 'Henry Gutierrez',
+    speakerFull: 'Gutierrez Barrionuevo, Henry Andre',
     title: 'Propiedad de Linealidad',
     shortTitle: 'Linealidad & Superposición',
     badge: 'Principio Fundamental',
     physicalInterpretation:
-      'La transformada de una combinación lineal de señales es la suma idéntica ponderada de sus espectros individuales. En canales y medios lineales, las señales coexisten sin generar productos de intermodulación ni batidos espurios.',
+      'La transformada de una combinación lineal de señales $\\mathcal{F}\\{a x_1(t) + b x_2(t)\\}$ es idéntica a la suma ponderada de sus espectros individuales $a X_1(f) + b X_2(f)$. En canales y medios lineales, las señales coexisten sin generar productos de intermodulación ni distorsión.',
     formulaTex:
       '\\mathcal{F}\\left\\{ a \\, x_1(t) + b \\, x_2(t) \\right\\} = a \\, X_1(f) + b \\, X_2(f)',
     formulaSecondaryTex:
@@ -126,6 +132,8 @@ plt.show()`,
       chart2XAxis: 'Frecuencia (Hz)',
       chart2YAxis: 'Magnitud |X(f)|',
     },
+    graphAnalysis:
+      'La gráfica temporal evidencia el patrón complejo de pulsaciones o batido resultante de sumar x₁(t) (50 Hz, 1.0 V) y x₂(t) (120 Hz, 0.7 V). En el dominio de frecuencia, el espectro de la suma (|X_suma|) reproduce de manera exacta los picos independientes en 50 Hz y 120 Hz sin alterar sus amplitudes y sin que aparezcan armónicos ni frecuencias espurias (f₁ ± f₂), demostrando empíricamente que el operador de Fourier es 100% lineal.',
     matlabCode: `% Verificación de la propiedad de linealidad
 fs = 1000; t = 0:1/fs:0.12;
 f1 = 50;  a = 1.0;   x1 = a * cos(2*pi*f1*t);
@@ -186,6 +194,8 @@ print(f"Error máximo de superposición: {error:.4e} V")`,
   {
     id: 4,
     number: '04',
+    speaker: 'Franco Gutierrez',
+    speakerFull: 'Gutierrez Ccolqque, Franco Arturo',
     title: 'Propiedad de Desplazamiento Temporal',
     shortTitle: 'Desplazamiento en el Tiempo',
     badge: 'Retardo de Propagación',
@@ -205,6 +215,8 @@ print(f"Error máximo de superposición: {error:.4e} V")`,
       chart2XAxis: 'Frecuencia (Hz)',
       chart2YAxis: 'Fase ∠X(f) (rad)',
     },
+    graphAnalysis:
+      'La primera gráfica compara la magnitud espectral |X(f)| de la señal original y la retardada por t₀ = 18 ms: ambas curvas se superponen de manera idéntica demostrando la conservación total de energía por frecuencia. La segunda gráfica revela el efecto del retardo: la fase original se mantiene plana en 0 rad mientras que la señal retardada describe una recta decreciente con pendiente estricta dθ/df = -2π·t₀ = -0.1131 rad/Hz, verificando un retardo de grupo constante sin dispersión no lineal.',
     matlabCode: `% Desplazamiento temporal y respuesta de fase
 fs = 1000; t = 0:1/fs:0.1;
 t0 = 0.018;        % Retardo temporal de 18 ms
@@ -263,11 +275,13 @@ print(f"Retardo de grupo tg = -dphi/domega = {t0*1000:.2f} ms constante")`,
   {
     id: 5,
     number: '05',
+    speaker: 'Zaul Uturunco',
+    speakerFull: 'Uturunco Cuela, Zaul Francisco',
     title: 'Escalamiento e Inversión Temporal',
     shortTitle: 'Escalamiento & Inversión',
     badge: 'Reciprocidad Tiempo-Frecuencia',
     physicalInterpretation:
-      'Comprimir una señal en el tiempo ($|a| > 1$) ensancha proporcionalmente su espectro en frecuencia y reduce su densidad espectral de amplitud por $1/|a|$. Invertir el tiempo ($a = -1$) refleja el espectro en frecuencia: $X(-f)$. Es la base del principio de incertidumbre en señales.',
+      'Comprimir una señal en el tiempo ($|a| > 1$) expande proporcionalmente su espectro en frecuencia y atenúa su densidad espectral por $1/|a|$. Invertir el tiempo ($a = -1$) refleja el espectro: $X(-f)$, expresando el principio de incertidumbre de Gabor: $\\Delta t \\cdot \\Delta f \\ge 1/(4\\pi)$.',
     formulaTex:
       '\\mathcal{F}\\left\\{ x(at) \\right\\} = \\frac{1}{|a|} X\\left(\\frac{f}{a}\\right) \\quad ; \\quad \\mathcal{F}\\left\\{ x(-t) \\right\\} = X(-f)',
     formulaSecondaryTex:
@@ -282,6 +296,8 @@ print(f"Retardo de grupo tg = -dphi/domega = {t0*1000:.2f} ms constante")`,
       chart2XAxis: 'Frecuencia (Hz)',
       chart2YAxis: 'Magnitud |X(f)|',
     },
+    graphAnalysis:
+      'En el panel temporal se observa que x(2t) (curva naranja, factor a = 2) reduce a la mitad su duración efectiva de 30 ms a 15 ms, mientras que x(-t) (curva verde) invierte el pulso asimétrico respecto al origen t = 0. En el panel espectral, x(2t) duplica su ancho de banda ocupado (de 22.4 Hz a 44.8 Hz) y reduce exactamente a la mitad su amplitud pico (1/|a| = 0.5), confirmando la ley de reciprocidad tiempo-frecuencia. El pulso invertido x(-t) conserva una magnitud espectral idéntica por paridad.',
     matlabCode: `% Escalamiento temporal y ensanchamiento de ancho de banda
 fs = 1000; t = -0.1:1/fs:0.1;
 tau = 0.015;
@@ -341,11 +357,13 @@ print(f"Amplitud espectral pico comprimido: {X_comp_mag[0]:.2f} (Exactamente 50%
   {
     id: 6,
     number: '06',
+    speaker: 'Alex Quispe',
+    speakerFull: 'Quispe Yncarroque, Alex Cesar',
     title: 'Desplazamiento en Frecuencia (Modulación)',
     shortTitle: 'Modulación & Desplazamiento',
     badge: 'Transmisión de Radiofrecuencia',
     physicalInterpretation:
-      'Multiplicar una señal en el dominio temporal por una oscilación portadora sinusoidal de frecuencia $f_c$ desplaza rígidamente todo su contenido espectral de banda base hacia $\\pm f_c$, creando dos bandas laterales (USB y LSB) centradas en la portadora.',
+      'Multiplicar una señal en banda base $x(t)$ por una portadora sinusoidal $\\cos(2\\pi f_c t)$ traslada rígidamente todo su espectro hacia las frecuencias $\\pm f_c$, generando dos bandas laterales: inferior (LSB en $f_c - f_m$) y superior (USB en $f_c + f_m$) con la mitad de su amplitud.',
     formulaTex:
       '\\mathcal{F}\\left\\{ x(t) e^{j2\\pi f_c t} \\right\\} = X(f - f_c)',
     formulaSecondaryTex:
@@ -360,6 +378,8 @@ print(f"Amplitud espectral pico comprimido: {X_comp_mag[0]:.2f} (Exactamente 50%
       chart2XAxis: 'Frecuencia (Hz)',
       chart2YAxis: 'Magnitud |S(f)|',
     },
+    graphAnalysis:
+      'En el dominio del tiempo se visualiza la rápida oscilación de la portadora de 200 Hz contenida rígidamente dentro de la envolvente moduladora de baja frecuencia a fm = 20 Hz (líneas segmentadas en naranja). En el dominio frecuencial, el cálculo DFT/FFT muestra la total supresión de la componente portadora central en 200 Hz y la aparición simétrica de dos bandas laterales limpias en 180 Hz (LSB = 200 - 20) y 220 Hz (USB = 200 + 20), cada una con amplitud exacta de 0.50 V, confirmando la traslación espectral sin pérdida.',
     matlabCode: `% Modulación en Amplitud de Doble Banda Lateral (DSB-SC)
 fs = 2000;              % Frecuencia de muestreo (Hz)
 t = 0:1/fs:0.08;        % 80 ms
@@ -416,11 +436,13 @@ for idx in peak_indices:
   {
     id: 7,
     number: '07',
+    speaker: 'Jeremy Villalta',
+    speakerFull: 'Villalta Checalla, Gianluigi Jeremy',
     title: 'Teorema de Convolución',
     shortTitle: 'Teorema de Convolución',
     badge: 'Sistemas LTI & Filtrado',
     physicalInterpretation:
-      'La convolución de dos señales en el dominio del tiempo equivale a una multiplicación directa punto a punto de sus correspondientes espectros de Fourier en el dominio frecuencial. Transforma una operación integral compleja en álgebra elemental.',
+      'La convolución temporal de una señal con la respuesta impulsiva de un sistema LTI, $x(t) * h(t)$, equivale a multiplicar punto a punto sus espectros de Fourier en frecuencia: $X(f) \\cdot H(f)$. Transforma el cálculo de una integral compleja en una multiplicación algebraica.',
     formulaTex:
       '\\mathcal{F}\\left\\{ x(t) * h(t) \\right\\} = X(f) \\cdot H(f)',
     formulaSecondaryTex:
@@ -435,6 +457,8 @@ for idx in peak_indices:
       chart2XAxis: 'Frecuencia (Hz)',
       chart2YAxis: 'Magnitud',
     },
+    graphAnalysis:
+      'La gráfica en el tiempo muestra cómo una señal compuesta altamente contaminada por ruido e interferencia armónica de 200 Hz (curva azul) se convierte, tras ser procesada por el filtro Butterworth de 4to orden (fc = 100 Hz), en una sinusoide limpia casi perfecta de 50 Hz (curva verde). En el espectro frecuencial se aprecia claramente el mecanismo: la curva de respuesta |H(f)| atenúa la componente de 200 Hz en más de 24 dB (dejándola reducida al 6.2%), mientras preserva la componente deseada de 50 Hz al 97% de su valor original.',
     matlabCode: `% Filtrado lineal mediante convolución en frecuencia
 fs = 2000; t = 0:1/fs:0.08;
 x_in = sin(2*pi*50*t) + 0.65*sin(2*pi*200*t); % 50 Hz deseada + 200 Hz ruido
@@ -491,6 +515,8 @@ print(f"Atenuación en interferencia (200 Hz): {gain_200:.4f} (-{20*np.log10(1/g
   {
     id: 8,
     number: '08',
+    speaker: 'Benjamín Quispe',
+    speakerFull: 'Quispe Flores, Benjamín Eduardo',
     title: 'Propiedad de Derivación Temporal',
     shortTitle: 'Derivación en el Tiempo',
     badge: 'Diferenciación & Respuesta en Alta Frecuencia',
@@ -510,6 +536,8 @@ print(f"Atenuación en interferencia (200 Hz): {gain_200:.4f} (-{20*np.log10(1/g
       chart2XAxis: 'Frecuencia (Hz)',
       chart2YAxis: 'Magnitud Normalizada',
     },
+    graphAnalysis:
+      'La señal original combina 15 Hz (1.0 V) con 45 Hz (0.45 V). En el dominio del tiempo, la derivada dx/dt acelera drásticamente las transiciones y enfatiza las crestas rápidas. En el dominio de frecuencia, la multiplicación por el operador j2πf actúa con una ganancia lineal directamente proporcional a la frecuencia: la componente de 45 Hz experimenta una amplificación exactamente 3 veces mayor (45/15 = 3x) que la de 15 Hz, provocando que su magnitud relativa pase de 0.45 a 1.35 V, con un adelanto de fase en cuadratura (+90°).',
     matlabCode: `% Propiedad de derivación temporal y amplificación de frecuencias
 fs = 1000; t = 0:1/fs:0.15;
 f1 = 15; a1 = 1.0;
@@ -564,6 +592,8 @@ print(f"Relación armónicos en dx/dt: {amp_rel_out:.2f} (Amplificación triple 
   {
     id: 9,
     number: '09',
+    speaker: 'Benjamín Quispe',
+    speakerFull: 'Quispe Flores, Benjamín Eduardo',
     title: 'Resumen y Conclusiones',
     shortTitle: 'Resumen & Conclusiones',
     badge: 'Síntesis Académica',
@@ -645,4 +675,3 @@ export const CONCLUSIONS = [
     tag: 'Redes Globales',
   },
 ];
-

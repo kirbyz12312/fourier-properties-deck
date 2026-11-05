@@ -37,3 +37,37 @@ export default function MathFormula({ tex, block = false, className = '' }) {
   );
 }
 
+/**
+ * Renderizador de párrafos de texto que contienen fórmulas LaTeX inline ($...$) o display ($$...$$).
+ * Parsea el texto y reemplaza automáticamente las expresiones matemáticas con KaTeX renderizado.
+ * @param {{ text: string, className?: string }} props
+ */
+export function LatexRenderer({ text, className = '' }) {
+  const elements = useMemo(() => {
+    if (!text || typeof text !== 'string') return null;
+
+    // Regex para detectar $$...$$ (display) y $...$ (inline)
+    const regex = /(\$\$[\s\S]*?\$\$|\$[^$\n]+?\$)/g;
+    const parts = text.split(regex);
+
+    return parts.map((part, index) => {
+      if (part.startsWith('$$') && part.endsWith('$$')) {
+        const math = part.slice(2, -2).trim();
+        return <MathFormula key={index} tex={math} block />;
+      }
+      if (part.startsWith('$') && part.endsWith('$')) {
+        const math = part.slice(1, -1).trim();
+        return (
+          <MathFormula
+            key={index}
+            tex={math}
+            className="font-medium text-cyan-300"
+          />
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  }, [text]);
+
+  return <span className={className}>{elements}</span>;
+}
