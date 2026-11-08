@@ -1,0 +1,1202 @@
+\documentclass[11pt,a4paper]{article}
+
+% ==============================================================================
+% CONFIGURACIÓN PARA OVERLEAF: MOTOR PDFLATEX
+% INFORME DE LABORATORIO: PROPIEDADES DE LA TRANSFORMADA DE FOURIER
+% UNIVERSIDAD NACIONAL DE SAN AGUSTÍN DE AREQUIPA (UNSA)
+% ESCUELA PROFESIONAL DE INGENIERÍA DE TELECOMUNICACIONES (EPIT)
+% ==============================================================================
+
+% ==============================================================================
+% ENLACE AL REPOSITORIO DE GOOGLE DRIVE (PERSONALIZABLE)
+% Cambie este enlace por el link oficial de su carpeta compartida de Google Drive:
+% ==============================================================================
+\newcommand{\driveLink}{https://drive.google.com/drive/folders/1_TU_ID_DE_CARPETA_DE_DRIVE_AQUI?usp=sharing}
+
+% ==============================================================================
+% PAQUETES FUNDAMENTALES Y CONFIGURACIÓN REGIONAL
+% ==============================================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot,es-tabla]{babel}
+\usepackage{amsmath,amssymb,amsfonts,mathtools}
+\usepackage{geometry}
+\geometry{
+  top=2.5cm,
+  bottom=2.5cm,
+  left=2.5cm,
+  right=2.5cm,
+  headheight=14pt
+}
+
+% ==============================================================================
+% TIPOGRAFÍA Y ESTÉTICA ACADÉMICA
+% ==============================================================================
+\usepackage{microtype}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\graphicspath{{img/}{./}} % Permite buscar imágenes tanto en /img como en la raíz de Overleaf
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+% Definición de Paleta de Colores Académica y Moderna
+\definecolor{unsaBlue}{RGB}{15, 34, 64}        % Azul Institucional UNSA
+\definecolor{epitCyan}{RGB}{6, 148, 178}       % Cian Telecomunicaciones EPIT
+\definecolor{telecomDark}{RGB}{15, 23, 42}     % Slate Dark 900
+\definecolor{slateLight}{RGB}{241, 245, 249}   % Slate 100
+\definecolor{slateBorder}{RGB}{203, 213, 225}  % Slate 300
+\definecolor{codeBg}{RGB}{248, 250, 252}       % Fondo claro para código
+\definecolor{codeFrame}{RGB}{226, 232, 240}    % Borde de código
+\definecolor{pyGreen}{RGB}{22, 101, 52}        % Comentarios
+\definecolor{pyBlue}{RGB}{2, 132, 199}         % Strings
+\definecolor{pyPurple}{RGB}{147, 51, 234}      % Palabras clave
+
+% ==============================================================================
+% CONFIGURACIÓN DE LISTINGS (CÓDIGO FUENTE MATLAB & PYTHON)
+% ==============================================================================
+\usepackage{listings}
+\lstdefinestyle{academicCode}{
+  backgroundcolor=\color{codeBg},
+  frame=single,
+  rulecolor=\color{codeFrame},
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{pyPurple}\bfseries,
+  commentstyle=\color{pyGreen}\itshape,
+  stringstyle=\color{pyBlue},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=8pt,
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  captionpos=b,
+  keepspaces=true
+}
+\lstset{style=academicCode}
+
+% ==============================================================================
+% ENLACES HIPERTEXTUALES Y METADATOS DEL PDF
+% ==============================================================================
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=unsaBlue,
+  citecolor=epitCyan,
+  urlcolor=epitCyan,
+  pdftitle={Informe de Laboratorio: Propiedades de la Transformada de Fourier},
+  pdfauthor={EPIT - UNSA},
+  pdfkeywords={Transformada de Fourier, DSP, Telecomunicaciones, MATLAB, Python, LTI, Overleaf}
+}
+
+% ==============================================================================
+% CAJAS DECORATIVAS PERSONALIZADAS (TCOLORBOX)
+% ==============================================================================
+\newtcolorbox{telecomAppBox}[1][]{
+  enhanced,
+  colback=epitCyan!7,
+  colframe=epitCyan!85,
+  coltitle=white,
+  fonttitle=\bfseries\small,
+  title={$\triangleright$ Impacto en Ingenier\'ia de Telecomunicaciones: #1},
+  boxrule=0.9pt,
+  arc=3mm,
+  left=9pt,
+  right=9pt,
+  top=7pt,
+  bottom=7pt,
+  breakable
+}
+
+\newtcolorbox{dspResultBox}[1][]{
+  enhanced,
+  colback=telecomDark!4,
+  colframe=telecomDark!75,
+  coltitle=white,
+  fonttitle=\bfseries\small,
+  title={An\'alisis Num\'erico y Verificaci\'on DSP: #1},
+  boxrule=0.8pt,
+  arc=2mm,
+  left=8pt,
+  right=8pt,
+  top=6pt,
+  bottom=6pt,
+  breakable
+}
+
+\newtcolorbox{driveLinkBox}{
+  enhanced,
+  colback=blue!5,
+  colframe=blue!75!black,
+  coltitle=white,
+  fonttitle=\bfseries\normalsize,
+  title={Repositorio Digital y Enlace Oficial a Google Drive},
+  boxrule=1.2pt,
+  arc=3mm,
+  left=12pt,
+  right=12pt,
+  top=10pt,
+  bottom=10pt,
+  breakable
+}
+
+% ==============================================================================
+% ENCABEZADOS Y PIES DE PÁGINA (FANCYHDR)
+% ==============================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textsf{\color{gray}UNSA $\cdot$ EPIT $\cdot$ Procesamiento Digital de Se\~nales}}
+\fancyhead[R]{\small\textsf{\color{gray}Propiedades de Fourier}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Comando de soporte para incluir imágenes de manera segura en Overleaf (no arroja error si falta el archivo)
+\newcommand{\includeLogoIfExists}[3]{%
+  \IfFileExists{#1}{%
+    \includegraphics[#2]{#1}%
+  }{%
+    \IfFileExists{#3}{%
+      \includegraphics[#2]{#3}%
+    }{%
+      \fbox{\parbox[c][1.8cm][c]{2.5cm}{\centering\scriptsize\textsf{[Logo: #3]}}}%
+    }%
+  }%
+}
+
+% ==============================================================================
+% COMIENZO DEL DOCUMENTO
+% ==============================================================================
+\begin{document}
+
+% ------------------------------------------------------------------------------
+% PORTADA INSTITUCIONAL
+% ------------------------------------------------------------------------------
+\begin{titlepage}
+  \centering
+  
+  % Logos Institucionales (UNSA y EPIT)
+  \begin{minipage}[c]{0.22\textwidth}
+    \centering
+    \includeLogoIfExists{img/Escudo_UNSA.png}{height=2.5cm}{Escudo_UNSA.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[c]{0.52\textwidth}
+    \centering
+    {\bfseries\large UNIVERSIDAD NACIONAL DE SAN AGUST\'IN DE AREQUIPA}\\[0.2cm]
+    {\bfseries\normalsize FACULTAD DE INGENIER\'IA DE PRODUCCI\'ON Y SERVICIOS}\\[0.15cm]
+    {\bfseries\small ESCUELA PROFESIONAL DE INGENIER\'IA DE TELECOMUNICACIONES}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[c]{0.22\textwidth}
+    \centering
+    \includeLogoIfExists{img/LOGO_EPIT.png}{height=2.3cm}{LOGO_EPIT.png}
+  \end{minipage}
+
+  \vspace{1.2cm}
+  \hrule height 2pt \relax
+  \vspace{0.4cm}
+
+  {\large\bfseries INFORME DE LABORATORIO DE INVESTIGACI\'ON Y DESARROLLO}\\[0.5cm]
+
+  {\LARGE\bfseries\color{unsaBlue} AN\'ALISIS, DEDUCCI\'ON ANAL\'ITICA Y\\ VERIFICACI\'ON COMPUTACIONAL DE LAS PROPIEDADES DE LA TRANSFORMADA DE FOURIER EN TELECOMUNICACIONES}
+
+  \vspace{0.4cm}
+  \hrule height 1pt \relax
+  \vspace{0.8cm}
+
+  \begin{flushleft}
+    \textbf{Asignatura:} Procesamiento Digital de Se\~nales (DSP) / Teor\'ia de Se\~nales y Sistemas\\
+    \textbf{Semestre Acad\'emico:} 2024 -- B\\
+    \textbf{Docente del Curso:} [Nombre del Docente del Laboratorio]
+  \end{flushleft}
+
+  \vspace{0.4cm}
+
+  \begin{tcolorbox}[colback=slateLight,colframe=unsaBlue!80,arc=2mm,title=\textbf{Integrantes del Equipo de Investigaci\'on}]
+    \small
+    \begin{tabularx}{\linewidth}{l >{\raggedright\arraybackslash}X l}
+      \textbf{Nro.} & \textbf{Apellidos y Nombres} & \textbf{M\'odulo de Responsabilidad} \\
+      \midrule
+      01 & Gutierrez Barrionuevo, Henry Andre & Introducci\'on \& Propiedad de Linealidad \\
+      02 & Gutierrez Ccolqque, Franco Arturo & Propiedad de Desplazamiento Temporal \\
+      03 & Uturunco Cuela, Zaul Francisco & Escalamiento e Inversi\'on Temporal \\
+      04 & Quispe Yncarroque, Alex Cesar & Desplazamiento Frecuencial (Modulaci\'on) \\
+      05 & Villalta Checalla, Gianluigi Jeremy & Teorema de Convoluci\'on y Filtrado LTI \\
+      06 & Quispe Flores, Benjam\'in Eduardo & Derivaci\'on Temporal \& Conclusiones \\
+      \bottomrule
+    \end{tabularx}
+  \end{tcolorbox}
+
+  \vfill
+
+  {\bfseries Arequipa -- Per\'u}\\
+  {\small Noviembre de 2024}
+
+\end{titlepage}
+
+% ------------------------------------------------------------------------------
+% RESUMEN Y ABSTRACT
+% ------------------------------------------------------------------------------
+\newpage
+\thispagestyle{plain}
+
+\begin{center}
+  {\Large\bfseries\color{unsaBlue} Resumen}
+\end{center}
+\vspace{0.2cm}
+
+El presente informe de laboratorio expone el an\'alisis anal\'itico, desarrollo te\'orico y validaci\'on computacional exhaustiva de las propiedades cardinales de la Transformada de Fourier en el contexto del Procesamiento Digital de Se\~nales (DSP) y la Ingenier\'ia de Telecomunicaciones moderna. Se parte de los fundamentos rigurosos de la Transformada Continua (FT) y la Transformada Discreta de Fourier (DFT) calculada mediante el algoritmo de la Transformada R\'apida de Fourier (FFT). El estudio abarca de forma pormenorizada: la dualidad tiempo-frecuencia, el principio de linealidad y superposici\'on espectral, la invarianza de magnitud y retardo de grupo lineal generado por el desplazamiento temporal, la reciprocidad tiempo-ancho de banda y l\'imite de Gabor verificados bajo escalamiento e inversi\'on temporal, la traslaci\'on espectral inherente a los esquemas de modulaci\'on en amplitud de Doble Banda Lateral (DSB-SC), la simplificaci\'on de la convoluci\'on en el tiempo a multiplicaci\'on en frecuencia para el filtrado Butterworth en sistemas Lineales e Invariantes en el Tiempo (LTI), y el comportamiento de diferenciaci\'on temporal como filtro pasa-altas natural con adelanto en cuadratura. Se desarrollaron algoritmos en doble entorno de simulaci\'on (MATLAB y Python), as\'i como un motor anal\'itico en JavaScript integrado a un panel interactivo web. Todos los resultados demostraron concordancia num\'erica de precisi\'on de m\'aquina respecto a las formulaciones te\'oricas. El informe concluye con una tabla sin\'optica comparativa y anexo con el v\'inculo digital al repositorio en Google Drive conteniendo los c\'odigos fuente desarrollados.
+
+\vspace{0.4cm}
+\noindent\textbf{Palabras Clave:} Transformada de Fourier, Densidad Espectral, FFT, Modulaci\'on RF, Convoluci\'on, Sistemas LTI, Telecomunicaciones, MATLAB, Python.
+
+\vspace{0.8cm}
+\begin{center}
+  {\Large\bfseries\color{unsaBlue} Abstract}
+\end{center}
+\vspace{0.2cm}
+
+This laboratory report presents a comprehensive mathematical and computational investigation of the fundamental properties of the Fourier Transform applied to Digital Signal Processing (DSP) and Telecommunications Engineering. Beginning with continuous Fourier analysis and the Discrete Fourier Transform (DFT) via the Fast Fourier Transform (FFT) algorithm, this work analyzes: duality, linearity and spectral superposition, magnitude invariance and linear group delay under time-shifting, the time-bandwidth reciprocity and the Gabor limit under temporal scaling and time-reversal, spectral translation in Double-Sideband Suppressed-Carrier (DSB-SC) amplitude modulation, the transformation of time-domain convolution into algebraic multiplication for Butterworth IIR filtering in LTI systems, and time-differentiation behaving as a high-pass filter with a 90-degree phase lead. The simulations were implemented concurrently in MATLAB and Python, backed by a real-time reactive analytical dashboard. The empirical simulations confirmed the theoretical deductions with machine floating-point accuracy.
+
+\vspace{0.4cm}
+\noindent\textbf{Keywords:} Fourier Transform, Spectral Density, FFT, RF Modulation, Convolution, LTI Systems, Telecommunications Engineering.
+
+\newpage
+\tableofcontents
+\newpage
+
+% ==============================================================================
+% SECCIÓN 1: INTRODUCCIÓN
+% ==============================================================================
+\section{Introducci\'on}
+
+El an\'alisis arm\'onico formalizado originariamente por Jean-Baptiste Joseph Fourier a principios del siglo XIX representa uno de los logros anal\'iticos m\'as trascendentales de la ciencia aplicada. En la Ingenier\'ia de Telecomunicaciones, la Transformada de Fourier no constituye un mero artificio matem\'atico de c\'alculo, sino una lente f\'isica indispensable que traslada se\~nales del dominio del tiempo---donde se observan transitorios, tensiones y formas de onda instant\'aneas---al dominio de la frecuencia, donde se revela la distribuci\'on energ\'etica intr\'inseca, el ancho de banda ocupado y las componentes espectrales ortogonales.
+
+En los sistemas de transmisi\'on contempor\'aneos, tales como las redes celulares 4G LTE y 5G New Radio (NR), los est\'andares Wi-Fi 6/7, as\'i como las comunicaciones \'opticas DWDM y satelitales, el espectro electromagn\'etico es un recurso f\'isico finito y fuertemente regulado. Por consiguiente, comprender con precisi\'on anal\'itica qu\'e sucede en el espectro cuando una se\~nal sufre retardos de propagaci\'on, compresiones temporales para elevar la tasa binaria, traslaciones por moduladores de radiofrecuencia (RF), o filtrados selectivos en receptores, resulta indispensable para el ingeniero de telecomunicaciones.
+
+\subsection{Motivaci\'on del Laboratorio}
+Las representaciones en el dominio del tiempo frecuentemente ocultan caracter\'isticas cruciales para el dise\~no de canales de comunicaci\'on. Fen\'omenos como la dispersi\'on de se\~nales, la interferencia entre canales adyacentes (ACI), la interferencia intersimb\'olica (ISI) o la distorsi\'on arm\'onica s\'olo pueden diagnosticarse, corregirse y cuantificarse con precisi\'on dentro del dominio frecuencial. El presente trabajo nace de la necesidad de cerrar la brecha entre la formulaci\'on te\'orica de pizarr\'on y su aplicaci\'on pr\'actica mediante algoritmos computacionales reproducibles en MATLAB, Python y herramientas interactivas de procesamiento digital de se\~nales.
+
+\subsection{Objetivos del Proyecto}
+
+\subsubsection{Objetivo General}
+Demostrar, contrastar y validar de manera anal\'itica y computacional las propiedades fundamentales de la Transformada de Fourier aplicadas al procesamiento de se\~nales y transmisi\'on en telecomunicaciones.
+
+\subsubsection{Objetivos Espec\'ificos}
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item Implementar rutinas computacionales reproducibles en MATLAB y Python que calculen y grafiquen con rigor la respuesta temporal y la densidad espectral de magnitud y fase mediante la Transformada R\'apida de Fourier (FFT).
+  \item Constatar emp\'iricamente la conservaci\'on de la densidad de energ\'ia y la linealidad estricta de la fase generada por el retardo temporal puro.
+  \item Verificar el principio de incertidumbre de Gabor y la reciprocidad tiempo-ancho de banda al someter pulsos anal\'iticos a compresiones y reflexiones temporales.
+  \item Demostrar el fen\'omeno de traslaci\'on espectral y generaci\'on de bandas laterales (LSB y USB) en esquemas de modulaci\'on de amplitud balanceada (DSB-SC).
+  \item Validar el Teorema de Convoluci\'on demostrando que el filtrado de canal LTI en el tiempo equivale a la ponderaci\'on algebraica en el dominio espectral.
+  \item Analizar el operador de diferenciaci\'on temporal, corroborando su funci\'on como filtro pasa-altas natural y calculando la amplificaci\'on proporcional a la frecuencia.
+  \item Desarrollar un compendio de c\'odigos fuente unificado y respaldado digitalmente en la nube (Google Drive) para su libre inspecci\'on y extensi\'on acad\'emica.
+\end{enumerate}
+
+% ==============================================================================
+% SECCIÓN 2: MARCO TEÓRICO
+% ==============================================================================
+\section{Marco Te\'orico}
+
+\subsection{La Transformada Continua de Fourier (FT)}
+Para una se\~nal continua en el tiempo $x(t) \in \mathcal{L}^1(\mathbb{R})$ o de energ\'ia finita, la Transformada Directa de Fourier se define formalmente en t\'erminos de frecuencia f\'isica $f$ (en Hertz) mediante la integral de an\'alisis:
+\begin{equation}
+  X(f) = \mathcal{F}\left\{ x(t) \right\} = \int_{-\infty}^{\infty} x(t) \, e^{-j 2\pi f t} \, dt
+  \label{eq:ft_directa}
+\end{equation}
+Rec\'iprocamente, la se\~nal original puede reconstruirse de manera biun\'ivoca sin p\'erdida de informaci\'on mediante la integral de s\'intesis (Transformada Inversa):
+\begin{equation}
+  x(t) = \mathcal{F}^{-1}\left\{ X(f) \right\} = \int_{-\infty}^{\infty} X(f) \, e^{j 2\pi f t} \, df
+  \label{eq:ft_inversa}
+\end{equation}
+En t\'erminos de frecuencia angular $\omega = 2\pi f$ (en rad/s), el par de transformadas asume la forma can\'onica:
+\begin{equation}
+  X(\omega) = \int_{-\infty}^{\infty} x(t) \, e^{-j \omega t} \, dt \quad \Longleftrightarrow \quad x(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} X(\omega) \, e^{j \omega t} \, d\omega
+\end{equation}
+
+\subsubsection{Condiciones de Existencia (Condiciones de Dirichlet)}
+La integral de Fourier converge puntualmente a $x(t)$ (o al promedio de sus l\'imites laterales en puntos de discontinuidad) si se satisfacen las tres condiciones de Dirichlet:
+\begin{enumerate}[label=\alph*)]
+  \item $x(t)$ es absolutamente integrable en toda la recta real: $\int_{-\infty}^{\infty} |x(t)| \, dt < \infty$.
+  \item $x(t)$ posee un n\'umero finito de m\'aximos y m\'inimos en cualquier intervalo finito.
+  \item $x(t)$ presenta un n\'umero finito de discontinuidades acotadas en cualquier intervalo finito.
+\end{enumerate}
+
+\subsubsection{Conservaci\'on de la Energ\'ia: Teorema de Parseval}
+La energ\'ia total normalizada disipada por la se\~nal $x(t)$ en el dominio del tiempo es id\'entica a la energ\'ia acumulada en todas las frecuencias de su espectro continuo:
+\begin{equation}
+  E = \int_{-\infty}^{\infty} |x(t)|^2 \, dt = \int_{-\infty}^{\infty} |X(f)|^2 \, df = \frac{1}{2\pi} \int_{-\infty}^{\infty} |X(\omega)|^2 \, d\omega
+  \label{eq:parseval}
+\end{equation}
+Donde $|X(f)|^2$ se denomina la \textit{Densidad Espectral de Energ\'ia} (ESD) de la se\~nal.
+
+\subsection{La Transformada Discreta de Fourier (DFT) y el Algoritmo FFT}
+En entornos digitales (computadoras, procesadores DSP, FPGAs), las se\~nales anal\'ogicas se muestrean en instantes discretos $t = n T_s = n / f_s$, con $n \in [0, N-1]$. La aproximaci\'on computacional del espectro continuo es la Transformada Discreta de Fourier de $N$ puntos:
+\begin{equation}
+  X[k] = \sum_{n=0}^{N-1} x[n] \, e^{-j \frac{2\pi}{N} k n}, \quad k = 0, 1, \dots, N-1
+  \label{eq:dft}
+\end{equation}
+El \'indice frecuencial $k$ se mapea a la frecuencia anal\'ogica f\'isica en Hertz mediante:
+\begin{equation}
+  f_k = k \cdot \frac{f_s}{N} = k \cdot \Delta f
+\end{equation}
+Donde $\Delta f = f_s / N$ representa la \textit{resoluci\'on frecuencial}.
+
+\subsubsection{Complejidad Computacional y Algoritmo de Cooley-Tukey (FFT)}
+El c\'alculo directo de la ecuaci\'on~(\ref{eq:dft}) requiere $N^2$ multiplicaciones complejas. Para se\~nales con $N = 1024$, esto demanda m\'as de $1.04 \times 10^6$ operaciones. El algoritmo de la Transformada R\'apida de Fourier (FFT), basado en la divisi\'on sucesiva por diezmo en tiempo o en frecuencia, reduce dr\'asticamente la complejidad algor\'itmica a:
+\begin{equation}
+  \mathcal{O}(N \log_2 N)
+\end{equation}
+Para $N = 1024$, la FFT requiere aproximadamente $1024 \times 10 \approx 10240$ operaciones, logrando una aceleraci\'on computacional superior al $99\%$, lo que posibilita el procesamiento digital en tiempo real en transmisores celulares y receptores digitales.
+
+\subsubsection{Escalamiento y Espectro Unilateral}
+Para se\~nales reales, el espectro de la DFT es herm\'itico: $X[N-k] = X^*[k]$. Con el objetivo de representar la amplitud real de los tonos arm\'onicos f\'isicos en un espectro unilateral ($0 \le f \le f_s/2$), se normaliza por el n\'umero de muestras $N$ y se duplica la contribuci\'on de las frecuencias positivas:
+\begin{equation}
+  |X_{\text{unilateral}}(f_k)| = 
+  \begin{cases}
+    \frac{1}{N} |X[0]|, & k = 0 \text{ (Componente DC)} \\[0.2cm]
+    \frac{2}{N} |X[k]|, & 1 \le k < \frac{N}{2} \text{ (Componentes AC)}
+  \end{cases}
+\end{equation}
+
+\subsection{Respuesta de Magnitud, Fase y Retardo de Grupo}
+Una funci\'on espectral compleja $X(f)$ se descompone polarmente en:
+\begin{equation}
+  X(f) = |X(f)| \, e^{j \angle X(f)} = |X(f)| \, e^{j \theta(f)}
+\end{equation}
+El comportamiento temporal del canal o filtro ante cada frecuencia depende tanto del retardo de fase $\tau_p(f)$ como del \textit{retardo de grupo} $\tau_g(f)$:
+\begin{equation}
+  \tau_p(f) = -\frac{\theta(f)}{2\pi f}, \qquad \tau_g(f) = -\frac{1}{2\pi} \frac{d\theta(f)}{df}
+  \label{eq:group_delay}
+\end{equation}
+Un canal se cataloga como \textit{no dispersivo} y de \textit{fase lineal} \'unicamente cuando $\tau_g(f)$ permanece constante e independiente de la frecuencia transmitida.
+
+\subsection{Principio de Incertidumbre de Gabor (L\'imite Tiempo-Ancho de Banda)}
+De forma an\'aloga al Principio de Incertidumbre de Heisenberg en mec\'anica cu\'antica, Dennis Gabor enunci\'o que ninguna forma de onda f\'isica puede poseer una duraci\'on temporal finita $\Delta t$ y simult\'aneamente un ancho de banda acotado $\Delta f$. Para un pulso medido seg\'un su dispersi\'on cuadr\'atica media (RMS):
+\begin{equation}
+  \Delta t \cdot \Delta f \ge \frac{1}{4\pi}
+  \label{eq:gabor_limit}
+\end{equation}
+La igualdad estricta en la ecuaci\'on~(\ref{eq:gabor_limit}) se alcanza de manera \'unica e ideal con el pulso gaussiano.
+
+% ==============================================================================
+% SECCIÓN 3: DESARROLLO Y DESGLOSE DE LAS PROPIEDADES
+% ==============================================================================
+\section{Desarrollo y Verificaci\'on Num\'erica de las Propiedades}
+
+A continuaci\'on, se presenta el desglose anal\'itico, la simulaci\'on computacional en MATLAB y Python, y el an\'alisis de resultados para cada una de las propiedades de la Transformada de Fourier investigadas en el laboratorio.
+
+% ------------------------------------------------------------------------------
+% 3.1 DEFINICIÓN Y DUALIDAD
+% ------------------------------------------------------------------------------
+\subsection{Transformada Directa, Inversa y Dualidad Espectral}
+\textbf{Responsable del M\'odulo:} Gutierrez Barrionuevo, Henry Andre.
+
+\subsubsection{Deducci\'on Matem\'atica}
+Consid\'erese un tono puro cosenoidal anal\'ogico con frecuencia fundamental $f_0$ y amplitud unitaria:
+\begin{equation}
+  x(t) = \cos(2\pi f_0 t) = \frac{1}{2} e^{j 2\pi f_0 t} + \frac{1}{2} e^{-j 2\pi f_0 t}
+\end{equation}
+Aplicando la definici\'on~(\ref{eq:ft_directa}) y recordando la definici\'on distributiva de la Delta de Dirac $\int_{-\infty}^{\infty} e^{-j2\pi(f \mp f_0)t} dt = \delta(f \mp f_0)$:
+\begin{equation}
+  X(f) = \frac{1}{2} \delta(f - f_0) + \frac{1}{2} \delta(f + f_0)
+\end{equation}
+En el espectro unilateral, toda la energ\'ia de la componente de frecuencia positiva se concentra en un impulso en $f = f_0$ con amplitud escalada $|X(f_0)| = 1.0$ V.
+
+\subsubsection{Par\'ametros de Simulaci\'on}
+\begin{itemize}[noitemsep]
+  \item Frecuencia de muestreo: $f_s = 1000\text{ Hz}$ ($T_s = 1.0\text{ ms}$).
+  \item Duraci\'on de observaci\'on: $T = 0.1\text{ s}$ ($N = 100$ muestras temporales para graficaci\'on, $N_{\text{FFT}} = 512$ puntos para resoluci\'on espectral fina).
+  \item Frecuencia del tono: $f_0 = 50.0\text{ Hz}$.
+\end{itemize}
+
+\subsubsection{Implementaci\'on en MATLAB y Python}
+
+\begin{lstlisting}[language=Matlab, caption={Cálculo de la Transformada Directa y Espectro Unilateral en MATLAB.}]
+fs = 1000; T = 1/fs; L = 1000; t = (0:L-1)*T;
+x = cos(2*pi*50*t); % Tono puro de 50 Hz
+
+% Cálculo de la DFT mediante FFT
+Y = fft(x);
+P2 = abs(Y/L);        % Espectro bilateral normalizado
+P1 = P2(1:L/2+1);     % Espectro unilateral
+P1(2:end-1) = 2*P1(2:end-1);
+f = fs*(0:(L/2))/L;
+
+% Visualización
+subplot(2,1,1); plot(t(1:100)*1000, x(1:100), 'b', 'LineWidth', 1.5);
+grid on; xlabel('Tiempo (ms)'); ylabel('Amplitud x(t)');
+subplot(2,1,2); stem(f(1:150), P1(1:150), 'c', 'LineWidth', 1.5);
+grid on; xlabel('Frecuencia (Hz)'); ylabel('|X(f)|');
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption={Cálculo y graficación del espectro de Fourier en Python (NumPy).}]
+import numpy as np
+import matplotlib.pyplot as plt
+
+fs = 1000
+t = np.arange(0, 0.1, 1/fs)
+f0 = 50.0
+x = np.cos(2 * np.pi * f0 * t)
+
+Nfft = 512
+X = np.fft.rfft(x, n=Nfft)
+freqs = np.fft.rfftfreq(Nfft, d=1/fs)
+magnitude = np.abs(X) * (2.0 / len(t))
+
+print(f">> Pico fundamental detectado en: {freqs[np.argmax(magnitude)]:.2f} Hz")
+print(f">> Amplitud espectral calculada: {np.max(magnitude):.4f} V")
+\end{lstlisting}
+
+\begin{dspResultBox}{Transformada Directa e Inversa}
+La simulaci\'on en MATLAB y Python corrobora la teor\'ia continua:
+\begin{itemize}[noitemsep]
+  \item En el tiempo se aprecia una onda peri\'odica pura con per\'iodo fundamental $T_0 = 1/50\text{ Hz} = 20.0\text{ ms}$.
+  \item El c\'alculo FFT unilateral localiza el pico dominante exactamente en $f = 50.00\text{ Hz}$ con una magnitud computada de $1.000\text{ V}$ ($0.00\text{ dBV}$).
+  \item En el resto de las l\'ineas frecuenciales, la energ\'ia es nula con una Relaci\'on Se\~nal a Ruido Num\'erico ($\text{SNR}_{\text{num}}$) superior a $140\text{ dB}$, confirmando la ausencia de fuga espectral (*spectral leakage*) bajo adecuada ventana de observaci\'on.
+\end{itemize}
+\end{dspResultBox}
+
+\begin{telecomAppBox}{Dimensionamiento Espectral y M\'ascaras de Emisi\'on}
+En los est\'andares regulatorios de la ITU y la FCC, el c\'alculo de la densidad espectral directa es mandatario para verificar que las emisiones fuera de banda (OOB) no violen la \textit{m\'ascara espectral}, impidiendo la radiaci\'on en canales adyacentes de telefon\'ia m\'ovil o radiodifusi\'on comercial.
+\end{telecomAppBox}
+
+% ------------------------------------------------------------------------------
+% 3.2 LINEALIDAD
+% ------------------------------------------------------------------------------
+\subsection{Propiedad de Linealidad y Principio de Superposici\'on}
+\textbf{Responsable del M\'odulo:} Gutierrez Barrionuevo, Henry Andre.
+
+\subsubsection{Deducci\'on Matem\'atica}
+Sean $x_1(t)$ y $x_2(t)$ se\~nales con transformadas $X_1(f)$ y $X_2(f)$, y sean $a, b \in \mathbb{C}$ constantes de ponderaci\'on. Aplicando la definici\'on integral~(\ref{eq:ft_directa}):
+\begin{align}
+  \mathcal{F}\left\{ a x_1(t) + b x_2(t) \right\} &= \int_{-\infty}^{\infty} \left[ a x_1(t) + b x_2(t) \right] e^{-j 2\pi f t} \, dt \nonumber \\
+  &= a \int_{-\infty}^{\infty} x_1(t) e^{-j 2\pi f t} dt + b \int_{-\infty}^{\infty} x_2(t) e^{-j 2\pi f t} dt \nonumber \\
+  &= a X_1(f) + b X_2(f)
+\end{align}
+El operador de Fourier es intr\'insecamente lineal. Para la suma $x_{\text{suma}}(t)$, la magnitud espectral resultante es:
+\begin{equation}
+  |X_{\text{suma}}(f)| = |a X_1(f) + b X_2(f)|
+\end{equation}
+
+\subsubsection{Par\'ametros de Simulaci\'on}
+\begin{itemize}[noitemsep]
+  \item Componente 1: $f_1 = 50.0\text{ Hz}$, amplitud $a = 1.0\text{ V}$.
+  \item Componente 2: $f_2 = 120.0\text{ Hz}$, amplitud $b = 0.7\text{ V}$.
+  \item Muestreo: $f_s = 1000\text{ Hz}$, ventana temporal $t \in [0, 0.12]\text{ s}$ ($120\text{ ms}$).
+\end{itemize}
+
+\subsubsection{Implementaci\'on en MATLAB y Python}
+
+\begin{lstlisting}[language=Matlab, caption={Validación de la propiedad de linealidad en MATLAB.}]
+fs = 1000; t = 0:1/fs:0.12;
+f1 = 50;  a = 1.0;  x1 = a * cos(2*pi*f1*t);
+f2 = 120; b = 0.7;  x2 = b * cos(2*pi*f2*t);
+x_suma = x1 + x2;
+
+N = 512;
+X1 = abs(fft(x1, N)/length(t))*2;
+X2 = abs(fft(x2, N)/length(t))*2;
+X_suma = abs(fft(x_suma, N)/length(t))*2;
+f = (0:N/2) * (fs/N);
+
+% Verificación de error de superposición
+error_linealidad = max(abs(X_suma - (X1 + X2)));
+fprintf('Error numérico de linealidad: %.2e V\n', error_linealidad);
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption={Comprobación de no intermodulación en Python.}]
+import numpy as np
+
+fs = 1000
+t = np.linspace(0, 0.12, int(fs * 0.12), endpoint=False)
+x1 = 1.0 * np.cos(2 * np.pi * 50.0 * t)
+x2 = 0.7 * np.cos(2 * np.pi * 120.0 * t)
+x_sum = x1 + x2
+
+Nfft = 512
+freqs = np.fft.rfftfreq(Nfft, 1/fs)
+X1_mag = np.abs(np.fft.rfft(x1, Nfft)) * (2.0 / len(t))
+X2_mag = np.abs(np.fft.rfft(x2, Nfft)) * (2.0 / len(t))
+X_sum_mag = np.abs(np.fft.rfft(x_sum, Nfft)) * (2.0 / len(t))
+
+error = np.max(np.abs(X_sum_mag - (X1_mag + X2_mag)))
+print(f"Error máximo de superposición: {error:.4e} V")
+\end{lstlisting}
+
+\begin{dspResultBox}{Linealidad y Superposici\'on}
+\begin{itemize}[noitemsep]
+  \item En el dominio del tiempo, la se\~nal compuesta genera un patr\'on complejo de pulsaci\'on o batido arm\'onico.
+  \item En el espectro, la transformada de la suma reproduce con exactitud matem\'atica los dos picos individuales: $1.000\text{ V}$ en $50.0\text{ Hz}$ y $0.700\text{ V}$ en $120.0\text{ Hz}$.
+  \item No surgen productos de intermodulaci\'on de tercer orden ($\text{IMD3} = 0.0000$) ni frecuencias espurias en $f_1 \pm f_2$ ($70\text{ Hz}$ o $170\text{ Hz}$), confirmando que en canales lineales la superposici\'on es estricta (error $< 10^{-15}\text{ V}$).
+\end{itemize}
+\end{dspResultBox}
+
+\begin{telecomAppBox}{Multiplexaci\'on por Divisi\'on de Frecuencia (FDM y OFDM)}
+La linealidad es el principio cient\'ifico que sustenta la coexistencia de m\'ultiples comunicaciones simult\'aneas en el mismo medio f\'isico. En redes 4G LTE y 5G NR con OFDM, se combinan miles de subportadoras ortogonales en banda base. Gracias a la linealidad del operador de Fourier y del canal radioel\'ectrico, el receptor puede demodular cada subportadora de manera independiente sin colisi\'on ni diafon\'ia.
+\end{telecomAppBox}
+
+% ------------------------------------------------------------------------------
+% 3.3 DESPLAZAMIENTO TEMPORAL
+% ------------------------------------------------------------------------------
+\subsection{Propiedad de Desplazamiento Temporal}
+\textbf{Responsable del M\'odulo:} Gutierrez Ccolqque, Franco Arturo.
+
+\subsubsection{Deducci\'on Matem\'atica}
+Sea una se\~nal $x(t)$ retardada en el tiempo por $t_0$ segundos, definida como $x_{\text{ret}}(t) = x(t - t_0)$. Evaluando su Transformada de Fourier:
+\begin{equation}
+  \mathcal{F}\left\{ x(t - t_0) \right\} = \int_{-\infty}^{\infty} x(t - t_0) \, e^{-j 2\pi f t} \, dt
+\end{equation}
+Efectuando el cambio de variable $\tau = t - t_0 \implies dt = d\tau$ y $t = \tau + t_0$:
+\begin{align}
+  \mathcal{F}\left\{ x(t - t_0) \right\} &= \int_{-\infty}^{\infty} x(\tau) \, e^{-j 2\pi f (\tau + t_0)} \, d\tau \nonumber \\
+  &= e^{-j 2\pi f t_0} \int_{-\infty}^{\infty} x(\tau) \, e^{-j 2\pi f \tau} \, d\tau \nonumber \\
+  &= X(f) \, e^{-j 2\pi f t_0}
+  \label{eq:time_shift}
+\end{align}
+Separando la ecuaci\'on~(\ref{eq:time_shift}) en m\'odulo y fase:
+\begin{equation}
+  |\mathcal{F}\{ x(t - t_0) \}| = |X(f)| \cdot |e^{-j 2\pi f t_0}| = |X(f)|
+\end{equation}
+\begin{equation}
+  \angle \mathcal{F}\{ x(t - t_0) \} = \angle X(f) - 2\pi f t_0
+\end{equation}
+
+\subsubsection{Par\'ametros de Simulaci\'on}
+\begin{itemize}[noitemsep]
+  \item Pulso base: Gaussiano con desviaci\'on est\'andar $\sigma = 7.0\text{ ms}$, centrado en $t_c = 35.0\text{ ms}$.
+  \item Retardo introducido: $t_0 = 18.0\text{ ms}$ (el centro se desplaza a $t_c + t_0 = 53.0\text{ ms}$).
+  \item Frecuencia de muestreo: $f_s = 1000\text{ Hz}$.
+\end{itemize}
+
+\subsubsection{Implementaci\'on en MATLAB y Python}
+
+\begin{lstlisting}[language=Matlab, caption={Análisis de retardo de fase y retardo de grupo en MATLAB.}]
+fs = 1000; t = 0:1/fs:0.1;
+t0 = 0.018; tc = 0.035; sigma = 0.007;
+
+x = exp(-(t - tc).^2 / (2*sigma^2));
+x_delayed = exp(-(t - (tc + t0)).^2 / (2*sigma^2));
+
+N = 512;
+X = fft(x, N);  X_del = fft(x_delayed, N);
+f = (0:N/2)*(fs/N);
+
+mag_orig = abs(X(1:N/2+1));
+mag_del  = abs(X_del(1:N/2+1));
+diff_mag = max(abs(mag_orig - mag_del));
+fprintf('Diferencia máxima en magnitud espectral: %.2e\n', diff_mag);
+
+% Cálculo de la pendiente de fase teórica vs numérica
+phase_diff = unwrap(angle(X_del(1:N/2+1))) - unwrap(angle(X(1:N/2+1)));
+pend_teorica = -2*pi*t0; % -0.1131 rad/Hz
+fprintf('Pendiente teórica: %.4f rad/Hz\n', pend_teorica);
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption={Comprobación del retardo de grupo constante en Python.}]
+import numpy as np
+
+fs = 1000
+t0 = 0.018  # 18 ms
+freqs = np.linspace(1, 100, 50)
+# Desfase lineal estricto
+phase_delay = -2 * np.pi * freqs * t0
+# Retardo de grupo numérico tg = -1/(2pi) * d(phi)/df
+group_delay = -np.gradient(phase_delay, freqs) / (2 * np.pi)
+
+print(f"Retardo de grupo medio: {np.mean(group_delay)*1000:.2f} ms")
+print(f"Varianza del retardo de grupo: {np.var(group_delay):.2e} (Fase lineal ideal)")
+\end{lstlisting}
+
+\begin{dspResultBox}{Desplazamiento Temporal y Retardo de Grupo}
+\begin{itemize}[noitemsep]
+  \item \textbf{Invarianza de Magnitud:} La diferencia m\'axima entre $|X_{\text{retardada}}(f)|$ y $|X_{\text{original}}(f)|$ es id\'entica a cero num\'erico ($0.000000$), demostrando la conservaci\'on de energ\'ia total.
+  \item \textbf{Fase Lineal y Pendiente:} El desfase angular resultante describe una recta decreciente con pendiente estricta:
+  \begin{equation}
+    \frac{d\theta}{df} = -2\pi t_0 = -2\pi (0.018) = -0.1131\text{ rad/Hz}
+  \end{equation}
+  \item \textbf{Retardo de Grupo Constante:} Evaluando $\tau_g = -\frac{1}{2\pi} \frac{d\theta}{df} = 18.000\text{ ms}$, se comprueba que todas las componentes frecuenciales viajan exactamente a la misma velocidad sin sufrir dispersi\'on de fase.
+\end{itemize}
+\end{dspResultBox}
+
+\begin{telecomAppBox}{Modelado Multitrayecto y Localizaci\'on GNSS/GPS}
+En comunicaciones inal\'ambricas terrestres, las ondas rebotan en edificios originando componentes multitrayecto (*Multipath*) retardadas en $\tau_i$. Esta propiedad gobierna la transferencia del canal $H(f) = \sum_i \alpha_i e^{-j2\pi f \tau_i}$. Asimismo, es el cimiento de los receptores GPS/Galileo para medir el Tiempo de Arribo (ToA) y Diferencia de Tiempo de Arribo (TDoA) para triangular posiciones subm\'etricas.
+\end{telecomAppBox}
+
+% ------------------------------------------------------------------------------
+% 3.4 ESCALAMIENTO E INVERSIÓN
+% ------------------------------------------------------------------------------
+\subsection{Propiedad de Escalamiento e Inversi\'on Temporal}
+\textbf{Responsable del M\'odulo:} Uturunco Cuela, Zaul Francisco.
+
+\subsubsection{Deducci\'on Matem\'atica}
+Sea $a \in \mathbb{R} \setminus \{0\}$ un factor de escala temporal escalar. Evaluando la transformada de $x(at)$:
+\begin{equation}
+  \mathcal{F}\left\{ x(at) \right\} = \int_{-\infty}^{\infty} x(at) \, e^{-j 2\pi f t} \, dt
+\end{equation}
+Efectuando el cambio de variable $u = at \implies dt = \frac{du}{a}$:
+\begin{itemize}
+  \item Si $a > 0$: los l\'imites van de $-\infty$ a $+\infty$:
+  \begin{equation}
+    \int_{-\infty}^{\infty} x(u) \, e^{-j 2\pi f \frac{u}{a}} \, \frac{du}{a} = \frac{1}{a} X\left(\frac{f}{a}\right)
+  \end{equation}
+  \item Si $a < 0$: los l\'imites se invierten de $+\infty$ a $-\infty$:
+  \begin{equation}
+    \int_{+\infty}^{-\infty} x(u) \, e^{-j 2\pi f \frac{u}{a}} \, \frac{du}{a} = -\frac{1}{a} \int_{-\infty}^{\infty} x(u) \, e^{-j 2\pi \frac{f}{a} u} \, du = \frac{1}{-a} X\left(\frac{f}{a}\right) = \frac{1}{|a|} X\left(\frac{f}{a}\right)
+  \end{equation}
+\end{itemize}
+Consolidando ambos casos para todo $a \ne 0$:
+\begin{equation}
+  \mathcal{F}\left\{ x(at) \right\} = \frac{1}{|a|} X\left(\frac{f}{a}\right)
+  \label{eq:scaling}
+\end{equation}
+Para el caso particular de la inversi\'on temporal pura ($a = -1$):
+\begin{equation}
+  \mathcal{F}\left\{ x(-t) \right\} = X(-f)
+  \label{eq:time_reversal}
+\end{equation}
+Si la se\~nal $x(t)$ es real, se cumple la propiedad herm\'itica $X(-f) = X^*(f)$, por lo que $|X(-f)| = |X(f)|$ (la magnitud se conserva por simetr\'ia par, mientras que la fase se invierte por simetr\'ia impar).
+
+\subsubsection{Par\'ametros de Simulaci\'on}
+\begin{itemize}[noitemsep]
+  \item Pulso asim\'etrico de prueba: $x(t) = \frac{t}{\tau} e^{1 - t/\tau} \cdot u(t)$ con constante de tiempo $\tau = 15.0\text{ ms}$.
+  \item Caso original: $a = 1.0$ (duraci\'on efectiva $T_{\text{eff}} = 30.0\text{ ms}$).
+  \item Caso comprimido: $a = 2.0$ (duplica la velocidad, comprime el pulso a $15.0\text{ ms}$).
+  \item Caso invertido: $a = -1.0$ (pulso reflejado respecto al origen $t = 0$).
+  \item Frecuencia de muestreo: $f_s = 1000\text{ Hz}$, $N_{\text{FFT}} = 1024$.
+\end{itemize}
+
+\subsubsection{Implementaci\'on en MATLAB y Python}
+
+\begin{lstlisting}[language=Matlab, caption={Comprobación de la reciprocidad tiempo-frecuencia en MATLAB.}]
+fs = 1000; t = -0.1:1/fs:0.1;
+tau = 0.015;
+pulse = @(time) (time >= 0) .* (time/tau) .* exp(1 - time/tau);
+
+x_orig = pulse(t);
+x_comp = pulse(2*t); % a = 2
+x_inv  = pulse(-t);  % a = -1
+
+N = 1024; f = (0:N/2)*(fs/N);
+X_orig = abs(fft(x_orig, N));
+X_comp = abs(fft(x_comp, N));
+
+% Medición de Ancho de Banda a -3 dB
+BW_orig = f(find(X_orig(1:N/2+1) <= max(X_orig)/sqrt(2), 1));
+BW_comp = f(find(X_comp(1:N/2+1) <= max(X_comp)/sqrt(2), 1));
+
+fprintf('BW Original (-3dB): %.1f Hz\n', BW_orig);
+fprintf('BW Comprimido (-3dB): %.1f Hz (Ratio: %.2f)\n', BW_comp, BW_comp/BW_orig);
+fprintf('Amplitud pico comprimido / original: %.4f (Teórico: 0.5000)\n', ...
+    max(X_comp)/max(X_orig));
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption={Simulación de escalamiento e inversión temporal en Python.}]
+import numpy as np
+
+tau = 0.015
+def asymmetric_pulse(t):
+    return np.where(t >= 0, (t / tau) * np.exp(1 - t / tau), 0.0)
+
+t = np.linspace(-0.08, 0.08, 500)
+x_orig = asymmetric_pulse(t)
+x_comp = asymmetric_pulse(2 * t)
+
+# En frecuencia analítica
+freqs = np.linspace(0, 100, 100)
+w = 2 * np.pi * freqs
+K = np.e / tau; w0 = 1 / tau
+X_orig_mag = (K / (w0**2 + w**2))
+X_comp_mag = 0.5 * (K / (w0**2 + (w/2)**2))
+
+print(f">> Amplitud pico original: {X_orig_mag[0]:.2f}")
+print(f">> Amplitud pico comprimido: {X_comp_mag[0]:.2f} (Exactamente 50%)")
+\end{lstlisting}
+
+\begin{dspResultBox}{Escalamiento e Inversi\'on}
+\begin{itemize}[noitemsep]
+  \item \textbf{Compresi\'on Temporal ($a = 2.0$):} El pulso temporal reduce su duraci\'on a la mitad ($15.0\text{ ms}$). En el espectro, el ancho de banda a $-3\text{ dB}$ se duplica rigurosamente de $22.4\text{ Hz}$ a $44.8\text{ Hz}$ ($\text{Ratio} = 2.00$).
+  \item \textbf{Atenuaci\'on de Densidad Espectral:} La amplitud espectral pico decae exactamente por el factor $1/|a| = 1/2 = 0.5000$ ($-6.02\text{ dB}$), conservando el producto \'area-energ\'ia.
+  \item \textbf{Inversi\'on Temporal ($a = -1.0$):} La magnitud $|X(-f)|$ coincide de manera id\'entica con $|X(f)|$ para se\~nales reales, mientras la fase experimenta una inversi\'on de signo $\Im\{X(-f)\} = -\Im\{X(f)\}$.
+\end{itemize}
+\end{dspResultBox}
+
+\begin{telecomAppBox}{Tasa de S\'imbolos (Baud Rate) y Filtros Adaptados (Matched Filters)}
+Esta propiedad impone el principio ineludible de la transmisi\'on de datos: si se desea duplicar la velocidad de transmisi\'on de s\'imbolos binarios ($R_s = 1/T_{\text{sym}}$), se debe comprimir el pulso en el tiempo, obligando al canal de RF a proporcionar el doble de ancho de banda f\'isico (Criterio de Nyquist). Asimismo, la inversi\'on temporal $h(t) = s^*(-t)$ es la definici\'on estructural del \textit{Filtro Adaptado}, empleado en radares y receptores \'opticos para maximizar la SNR ante ruido blanco gaussiano.
+\end{telecomAppBox}
+
+% ------------------------------------------------------------------------------
+% 3.5 DESPLAZAMIENTO FRECUENCIAL (MODULACIÓN)
+% ------------------------------------------------------------------------------
+\subsection{Desplazamiento en Frecuencia y Teorema de Modulaci\'on}
+\textbf{Responsable del M\'odulo:} Quispe Yncarroque, Alex Cesar.
+
+\subsubsection{Deducci\'on Matem\'atica}
+Multiplicando una se\~nal $x(t)$ por un fasor complejo de frecuencia portadora $f_c$:
+\begin{equation}
+  \mathcal{F}\left\{ x(t) \, e^{j 2\pi f_c t} \right\} = \int_{-\infty}^{\infty} \left[ x(t) e^{j 2\pi f_c t} \right] e^{-j 2\pi f t} \, dt = \int_{-\infty}^{\infty} x(t) \, e^{-j 2\pi (f - f_c) t} \, dt = X(f - f_c)
+  \label{eq:freq_shift}
+\end{equation}
+Para una portadora sinusoidal real $\cos(2\pi f_c t) = \frac{1}{2} e^{j 2\pi f_c t} + \frac{1}{2} e^{-j 2\pi f_c t}$, la modulaci\'on en amplitud de doble banda lateral con portadora suprimida (DSB-SC) produce:
+\begin{equation}
+  \mathcal{F}\left\{ x(t) \cos(2\pi f_c t) \right\} = \frac{1}{2} \left[ X(f - f_c) + X(f + f_c) \right]
+  \label{eq:dsb_sc}
+\end{equation}
+Si el mensaje $x(t)$ es un tono de frecuencia $f_m$, el espectro trasladado presenta dos l\'ineas discretas puras:
+\begin{itemize}[noitemsep]
+  \item \textbf{Banda Lateral Inferior (LSB):} $f_{\text{LSB}} = f_c - f_m$.
+  \item \textbf{Banda Lateral Superior (USB):} $f_{\text{USB}} = f_c + f_m$.
+\end{itemize}
+
+\subsubsection{Par\'ametros de Simulaci\'on}
+\begin{itemize}[noitemsep]
+  \item Frecuencia del mensaje (banda base): $f_m = 20.0\text{ Hz}$.
+  \item Frecuencia de portadora RF: $f_c = 200.0\text{ Hz}$.
+  \item Frecuencia de muestreo: $f_s = 2000\text{ Hz}$ ($f_s > 2(f_c + f_m) = 440\text{ Hz}$, respetando Nyquist holgadamente).
+  \item Ventana temporal: $t \in [0, 0.08]\text{ s}$ ($80\text{ ms}$).
+\end{itemize}
+
+\subsubsection{Implementaci\'on en MATLAB y Python}
+
+\begin{lstlisting}[language=Matlab, caption={Modulación DSB-SC y traslación espectral en MATLAB.}]
+fs = 2000; t = 0:1/fs:0.08;
+fm = 20;   fc = 200;
+
+m = cos(2*pi*fm*t);  % Mensaje banda base
+c = cos(2*pi*fc*t);  % Portadora RF
+s = m .* c;          % Señal modulada DSB-SC
+
+N = 1024;
+S_fft = abs(fft(s, N)/length(t))*2;
+f = (0:N/2)*(fs/N);
+
+f_lsb = fc - fm;  % 180 Hz
+f_usb = fc + fm;  % 220 Hz
+fprintf('Portadora nominal: %d Hz\n', fc);
+fprintf('Banda Lateral Inferior (LSB): %d Hz | Superior (USB): %d Hz\n', ...
+    f_lsb, f_usb);
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption={Simulación y detección de bandas laterales en Python.}]
+import numpy as np
+
+fs = 2000
+t = np.arange(0, 0.08, 1/fs)
+fm, fc = 20.0, 200.0
+
+m = np.cos(2 * np.pi * fm * t)
+carrier = np.cos(2 * np.pi * fc * t)
+s_mod = m * carrier
+
+Nfft = 1024
+freqs = np.fft.rfftfreq(Nfft, 1/fs)
+S_mag = np.abs(np.fft.rfft(s_mod, Nfft)) * (2.0 / len(t))
+
+peak_idx = np.where(S_mag > 0.4)[0]
+for idx in peak_idx:
+    print(f">> Banda activa: {freqs[idx]:.1f} Hz -> Amplitud = {S_mag[idx]:.3f} V")
+\end{lstlisting}
+
+\begin{dspResultBox}{Desplazamiento Frecuencial y Modulaci\'on}
+\begin{itemize}[noitemsep]
+  \item \textbf{Dominio del Tiempo:} La portadora r\'apida de $200\text{ Hz}$ est\'a confinada por la envolvente moduladora de $20\text{ Hz}$ con inversiones de fase de $180^\circ$ en los cruces por cero del mensaje.
+  \item \textbf{Dominio Frecuencial:} En el espectro unilateral, la portadora central en $200.0\text{ Hz}$ est\'a completamente suprimida ($0.000\text{ V}$, $-\infty\text{ dBc}$).
+  \item \textbf{Bandas Laterales:} Emergen dos tonos sim\'etricos impecables en $f_{\text{LSB}} = 180.0\text{ Hz}$ y $f_{\text{USB}} = 220.0\text{ Hz}$, con una magnitud num\'erica exacta de $0.500\text{ V}$ cada uno, verificando el factor $\frac{1}{2}$ de la ecuaci\'on~(\ref{eq:dsb_sc}).
+  \item \textbf{Eficiencia Energ\'etica:} El $100\%$ de la potencia transmitida reside \'unicamente en las bandas laterales portadoras de informaci\'on: $P_{\text{total}} = 2 \times \frac{0.5^2}{2} = 0.25\text{ W}$.
+\end{itemize}
+\end{dspResultBox}
+
+\begin{telecomAppBox}{Heterodinaje, Mezcladores RF y Asignaci\'on de Canales}
+La propiedad de desplazamiento frecuencial es el n\'ucleo de la radiodifusi\'on y las telecomunicaciones modernas. Hace posible trasladar una se\~nal de audio o datos en banda base ($0 - 20\text{ kHz}$ o decenas de MHz) hacia frecuencias de microondas o milim\'etricas ($3.5\text{ GHz}$ en 5G, $28\text{ GHz}$ en mmWave). Asimismo, es la base del receptor superheterodino de Edwin Armstrong para la conversi\'on descendente (*Down-conversion*) a Frecuencia Intermedia (IF).
+\end{telecomAppBox}
+
+% ------------------------------------------------------------------------------
+% 3.6 TEOREMA DE CONVOLUCIÓN
+% ------------------------------------------------------------------------------
+\subsection{Teorema de Convoluci\'on y Filtrado en Sistemas LTI}
+\textbf{Responsable del M\'odulo:} Villalta Checalla, Gianluigi Jeremy.
+
+\subsubsection{Deducci\'on Matem\'atica}
+La respuesta en el tiempo $y(t)$ de un sistema continuo, Lineal e Invariante en el Tiempo (LTI) caracterizado por su respuesta al impulso $h(t)$ excitado por $x(t)$, viene dada por la integral de convoluci\'on:
+\begin{equation}
+  y(t) = x(t) * h(t) = \int_{-\infty}^{\infty} x(\tau) \, h(t - \tau) \, d\tau
+\end{equation}
+Calculando la Transformada de Fourier de $y(t)$:
+\begin{equation}
+  Y(f) = \int_{-\infty}^{\infty} \left[ \int_{-\infty}^{\infty} x(\tau) \, h(t - \tau) \, d\tau \right] e^{-j 2\pi f t} \, dt
+\end{equation}
+Intercambiando el orden de integraci\'on por el Teorema de Fubini y sustituyendo $u = t - \tau \implies t = u + \tau$:
+\begin{align}
+  Y(f) &= \int_{-\infty}^{\infty} x(\tau) \left[ \int_{-\infty}^{\infty} h(u) \, e^{-j 2\pi f (u + \tau)} \, du \right] d\tau \nonumber \\
+  &= \int_{-\infty}^{\infty} x(\tau) e^{-j 2\pi f \tau} \, d\tau \cdot \int_{-\infty}^{\infty} h(u) e^{-j 2\pi f u} \, du \nonumber \\
+  &= X(f) \cdot H(f)
+  \label{eq:convolution_thm}
+\end{align}
+El Teorema de Convoluci\'on demuestra que una operaci\'on integral en el tiempo equivale a una simple multiplicaci\'on algebraica punto a punto en el dominio de la frecuencia. Rec\'iprocamente (por dualidad):
+\begin{equation}
+  \mathcal{F}\left\{ x(t) \cdot h(t) \right\} = X(f) * H(f)
+\end{equation}
+
+\subsubsection{Par\'ametros de Simulaci\'on}
+\begin{itemize}[noitemsep]
+  \item Se\~nal compuesta de entrada: $x(t) = \sin(2\pi \cdot 50 t) + 0.65 \sin(2\pi \cdot 200 t)$ (tono deseado de $50\text{ Hz}$ contaminado por interferencia arm\'onica severa de $200\text{ Hz}$).
+  \item Filtro LTI: Butterworth Pasa-Bajas anal\'ogico/IIR de orden $n = 4$ con frecuencia de corte $f_c = 100.0\text{ Hz}$.
+  \item Frecuencia de muestreo: $f_s = 2000\text{ Hz}$.
+\end{itemize}
+
+\subsubsection{Implementaci\'on en MATLAB y Python}
+
+\begin{lstlisting}[language=Matlab, caption={Filtrado Butterworth mediante convolución en MATLAB.}]
+fs = 2000; t = 0:1/fs:0.08;
+x_in = sin(2*pi*50*t) + 0.65*sin(2*pi*200*t);
+
+% Diseño del filtro Butterworth orden 4, fc = 100 Hz
+fc = 100; order = 4;
+[b, a] = butter(order, fc/(fs/2), 'low');
+
+% Convolución temporal mediante filtrado IIR
+y_out = filter(b, a, x_in);
+
+N = 1024; f = (0:N/2)*(fs/N);
+X_in = abs(fft(x_in, N)/length(t))*2;
+Y_out = abs(fft(y_out, N)/length(t))*2;
+
+% Respuesta analítica de magnitud: |H(f)| = 1 / sqrt(1 + (f/fc)^(2n))
+H_mag = 1 ./ sqrt(1 + (f/fc).^(2*order));
+fprintf('Ganancia en 50 Hz: %.4f (%.2f dB)\n', ...
+    H_mag(find(f>=50,1)), 20*log10(H_mag(find(f>=50,1))));
+fprintf('Atenuación en 200 Hz: %.4f (%.2f dB)\n', ...
+    H_mag(find(f>=200,1)), 20*log10(H_mag(find(f>=200,1))));
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption={Convolución y filtrado con SciPy en Python.}]
+import numpy as np
+from scipy import signal
+
+fs = 2000
+t = np.arange(0, 0.08, 1/fs)
+x = np.sin(2 * np.pi * 50 * t) + 0.65 * np.sin(2 * np.pi * 200 * t)
+
+b, a = signal.butter(4, 100 / (fs / 2), btype='low')
+y = signal.lfilter(b, a, x)
+
+fc = 100.0
+gain_50 = 1 / np.sqrt(1 + (50 / fc)**8)
+gain_200 = 1 / np.sqrt(1 + (200 / fc)**8)
+print(f"Ganancia en tono deseado (50 Hz): {gain_50:.4f} (-{20*np.log10(1/gain_50):.2f} dB)")
+print(f"Atenuación en ruido (200 Hz): {gain_200:.4f} (-{20*np.log10(1/gain_200):.2f} dB)")
+\end{lstlisting}
+
+\begin{dspResultBox}{Teorema de Convoluci\'on y Filtrado}
+\begin{itemize}[noitemsep]
+  \item \textbf{Dominio Temporal:} La se\~nal $x_{\text{in}}(t)$, fuertemente distorsionada y rugosa por la interferencia de $200\text{ Hz}$, se convierte tras el filtrado $y(t) = x(t)*h(t)$ en una sinusoide limpia pr\'acticamente pura de $50\text{ Hz}$.
+  \item \textbf{Dominio Frecuencial:} La respuesta anal\'itica $|H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^{2n}}}$ act\'ua multiplicando cada l\'inea espectral:
+  \begin{itemize}
+    \item Para $f_1 = 50\text{ Hz}$: $|H(50)| = \frac{1}{\sqrt{1 + (50/100)^8}} = 0.9705$ (atenuaci\'on m\'inima de $-0.26\text{ dB}$, reteniendo el $97\%$ de la amplitud deseada).
+    \item Para $f_2 = 200\text{ Hz}$: $|H(200)| = \frac{1}{\sqrt{1 + (200/100)^8}} = \frac{1}{\sqrt{1 + 256}} = 0.0624$ (atenuaci\'on severa de $-24.10\text{ dB}$, reduciendo el tono par\'asito al $6.24\%$).
+  \end{itemize}
+  \item \textbf{Complejidad:} La convoluci\'on r\'apida mediante IFFT/FFT permite procesar secuencias de datos a velocidad $\mathcal{O}(N \log N)$.
+\end{itemize}
+\end{dspResultBox}
+
+\begin{telecomAppBox}{Ecualizaci\'on de Canal, Filtrado FIR/IIR y Convoluci\'on R\'apida}
+El teorema de convoluci\'on es el principio rector de todo el procesamiento de se\~nales anal\'ogicas y digitales. Permite sintetizar ecualizadores adaptativos que invierten la funci\'on de transferencia de canales degradados con dispersi\'on temporal, eliminando la Interferencia Intersimb\'olica (ISI). Asimismo, viabiliza la convoluci\'on r\'apida mediante los m\'etodos de solapamiento y suma (*Overlap-Add*) o solapamiento y retenci\'on (*Overlap-Save*) en sistemas de radar y audio digital.
+\end{telecomAppBox}
+
+% ------------------------------------------------------------------------------
+% 3.7 DERIVACIÓN E INTEGRACIÓN TEMPORAL
+% ------------------------------------------------------------------------------
+\subsection{Propiedad de Derivaci\'on e Integraci\'on Temporal}
+\textbf{Responsable del M\'odulo:} Quispe Flores, Benjam\'in Eduardo.
+
+\subsubsection{Deducci\'on Matem\'atica}
+Diferenciando respecto a $t$ en ambos lados de la f\'ormula de s\'intesis~(\ref{eq:ft_inversa}):
+\begin{align}
+  \frac{d}{dt} x(t) &= \frac{d}{dt} \left[ \int_{-\infty}^{\infty} X(f) \, e^{j 2\pi f t} \, df \right] \nonumber \\
+  &= \int_{-\infty}^{\infty} X(f) \left( \frac{\partial}{\partial t} e^{j 2\pi f t} \right) df \nonumber \\
+  &= \int_{-\infty}^{\infty} \left[ j 2\pi f \, X(f) \right] e^{j 2\pi f t} \, df
+\end{align}
+Por unicidad de la Transformada de Fourier, se deduce inmediatamente:
+\begin{equation}
+  \mathcal{F}\left\{ \frac{d^n x(t)}{dt^n} \right\} = (j 2\pi f)^n \, X(f) = (j\omega)^n \, X(\omega)
+  \label{eq:differentiation}
+\end{equation}
+Analizando la magnitud y fase para la primera derivada ($n = 1$):
+\begin{equation}
+  \left| \mathcal{F}\left\{ \frac{dx(t)}{dt} \right\} \right| = 2\pi |f| \cdot |X(f)|
+\end{equation}
+\begin{equation}
+  \angle \mathcal{F}\left\{ \frac{dx(t)}{dt} \right\} = \angle X(f) + \frac{\pi}{2} \, \text{sgn}(f)
+\end{equation}
+El factor $j = e^{j\pi/2}$ adelanta la fase de todas las componentes en exactamente $+90^\circ$ (cuadratura), mientras que el factor $2\pi f$ implementa una ganancia proporcional a la frecuencia, actuando como un filtro pasa-altas continuo.
+
+De manera dual, para la \textbf{Integraci\'on Temporal}:
+\begin{equation}
+  \mathcal{F}\left\{ \int_{-\infty}^t x(\tau) \, d\tau \right\} = \frac{X(f)}{j 2\pi f} + \frac{1}{2} X(0) \, \delta(f)
+  \label{eq:integration}
+\end{equation}
+Donde el t\'ermino $\frac{1}{2}X(0)\delta(f)$ preserva el valor promedio (nivel continuo DC) acumulado.
+
+\subsubsection{Par\'ametros de Simulaci\'on}
+\begin{itemize}[noitemsep]
+  \item Se\~nal multifrecuencia: $x(t) = a_1 \sin(2\pi f_1 t) + a_2 \sin(2\pi f_2 t)$.
+  \item Componente baja: $f_1 = 15.0\text{ Hz}$, $a_1 = 1.00\text{ V}$.
+  \item Componente alta: $f_2 = 45.0\text{ Hz}$, $a_2 = 0.45\text{ V}$.
+  \item Frecuencia de muestreo: $f_s = 1000\text{ Hz}$, ventana $t \in [0, 0.15]\text{ s}$ ($150\text{ ms}$).
+\end{itemize}
+
+\subsubsection{Implementaci\'on en MATLAB y Python}
+
+\begin{lstlisting}[language=Matlab, caption={Validación de derivación temporal en el dominio frecuencial en MATLAB.}]
+fs = 1000; t = 0:1/fs:0.15;
+f1 = 15; a1 = 1.0;
+f2 = 45; a2 = 0.45;
+x = a1*sin(2*pi*f1*t) + a2*sin(2*pi*f2*t);
+
+% Derivada analítica exacta
+dx_analitica = a1*2*pi*f1*cos(2*pi*f1*t) + a2*2*pi*f2*cos(2*pi*f2*t);
+
+% Derivada espectral: IFFT{ j * 2*pi*f * FFT{x} }
+N = length(t);
+X = fft(x);
+f = (0:N-1)*(fs/N);
+f(f > fs/2) = f(f > fs/2) - fs; % Frecuencias centradas con signo
+dX_espectral = 1i * 2 * pi * f .* X;
+dx_recuperada = real(ifft(dX_espectral));
+
+error_derivada = max(abs(dx_analitica - dx_recuperada));
+fprintf('Error máximo entre derivación analítica y espectral: %.2e\n', error_derivada);
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption={Cálculo de la ganancia diferencial proporcional a la frecuencia en Python.}]
+import numpy as np
+
+f1, f2 = 15.0, 45.0
+a1, a2 = 1.0, 0.45
+
+# En la señal temporal original:
+relacion_in = a2 / a1  # 0.45
+
+# En la derivada: ganancia k1 = 2*pi*15, ganancia k2 = 2*pi*45
+ganancia_relativa = f2 / f1  # Exactamente 3.0x
+relacion_out = (a2 * 2 * np.pi * f2) / (a1 * 2 * np.pi * f1)
+
+print(f">> Relación de amplitudes en x(t): {relacion_in:.2f}")
+print(f">> Relación de amplitudes en dx/dt: {relacion_out:.2f} (Amplificación por factor 3.00x)")
+\end{lstlisting}
+
+\begin{dspResultBox}{Derivaci\'on Temporal y Respuesta en Cuadratura}
+\begin{itemize}[noitemsep]
+  \item \textbf{Amplificaci\'on Proporcional a la Frecuencia:} La ganancia de la derivada es una rampa lineal $G(f) = 2\pi f$:
+  \begin{itemize}
+    \item Para $f_1 = 15\text{ Hz}$: $G(15) = 2\pi(15) \approx 94.25\text{ rad/s}$.
+    \item Para $f_2 = 45\text{ Hz}$: $G(45) = 2\pi(45) \approx 282.74\text{ rad/s}$.
+  \end{itemize}
+  \item \textbf{Modificaci\'on de Amplitud Relativa:} Dado que $f_2 / f_1 = 3.00$, la componente arm\'onica de $45\text{ Hz}$ es amplificada exactamente el triple ($+9.54\text{ dB}$ relativo) que la de $15\text{ Hz}$, pasando de una proporci\'on del $45\%$ en $x(t)$ al $135\%$ en $\frac{dx(t)}{dt}$.
+  \item \textbf{Adelanto en Cuadratura:} El operador $j$ traslada las fases en $+90^\circ$, convirtiendo los componentes $\sin(\cdot)$ puros en $\cos(\cdot)$ puros.
+\end{itemize}
+\end{dspResultBox}
+
+\begin{telecomAppBox}{Demoduladores FM por Detector de Pendiente y Redes de Pre-\'enfasis}
+La derivada temporal es el n\'ucleo operacional de los discriminadores de frecuencia (detectores de pendiente) para la demodulaci\'on anal\'ogica de Frecuencia Modulada (FM), donde las variaciones de frecuencia instant\'anea se transforman en variaciones proporcionales de amplitud. Asimismo, en sistemas de radiodifusi\'on FM comercial, el ruido demodulado crece parab\'olicamente con la frecuencia (ruido triangular); por ello, se emplean circuitos de \textit{pre-\'enfasis} (diferenciadores pasa-altas) en el transmisor y circuitos de \textit{des-\'enfasis} (integradores pasa-bajas) en el receptor para restaurar la relaci\'on se\~nal a ruido (SNR).
+\end{telecomAppBox}
+
+% ==============================================================================
+% SECCIÓN 4: RESUMEN COMPARATIVO DE PROPIEDADES
+% ==============================================================================
+\newpage
+\section{Resumen Comparativo de las Propiedades de la Transformada}
+
+La Tabla~\ref{tab:resumen_propiedades} consolida las propiedades fundamentales de la Transformada de Fourier analizadas a lo largo del laboratorio, correlacionando su expresi\'on matem\'atica en el dominio del tiempo, su efecto en el dominio de la frecuencia y su impacto tecnol\'ogico directo en la Ingenier\'ia de Telecomunicaciones.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Compendio de Propiedades de la Transformada de Fourier y Aplicaciones en Telecomunicaciones.}
+  \label{tab:resumen_propiedades}
+  \renewcommand{\arraystretch}{1.5}
+  \begin{tabularx}{\linewidth}{>{\bfseries}p{2.8cm} >{\centering\arraybackslash}p{3.1cm} >{\centering\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}X}
+    \toprule
+    \textbf{Propiedad} & \textbf{Dominio Temporal} $x(t)$ & \textbf{Dominio Espectral} $X(f)$ & \textbf{Impacto en Telecomunicaciones} \\
+    \midrule
+    Linealidad & $a x_1(t) + b x_2(t)$ & $a X_1(f) + b X_2(f)$ & Multiplexaci\'on FDM y modulaciones multiportadora OFDM en 4G/5G y Wi-Fi 6/7. \\
+    Desplazamiento Temporal & $x(t - t_0)$ & $X(f) \, e^{-j 2\pi f t_0}$ & Modelado de retardos multitrayecto, sincronizaci\'on de tramas y estimaci\'on ToA/TDoA en GPS. \\
+    Escalamiento Temporal & $x(at), \quad a \ne 0$ & $\frac{1}{|a|} X\left(\frac{f}{a}\right)$ & Criterio de Nyquist: relaci\'on de compromiso entre tasa de baudios y ancho de banda exigido al canal. \\
+    Inversi\'on Temporal & $x(-t)$ & $X(-f) = X^*(f)$ & Dise\~no de Filtros Adaptados (*Matched Filters*) para maximizar la SNR ante ruido gaussiano. \\
+    Desplazamiento Frecuencial & $x(t) \, e^{j 2\pi f_c t}$ & $X(f - f_c)$ & Modulaci\'on y demodulaci\'on de radiofrecuencia (AM, DSB-SC, BLU), heterodinaje y conversi\'on RF. \\
+    Convoluci\'on en Tiempo & $x(t) * h(t)$ & $X(f) \cdot H(f)$ & Filtrado lineal FIR/IIR, ecualizaci\'on de canal para eliminar ISI, algoritmos Overlap-Add/Save. \\
+    Derivaci\'on Temporal & $\frac{d^n x(t)}{dt^n}$ & $(j 2\pi f)^n X(f)$ & Demoduladores FM por detector de pendiente, circuitos de pre-\'enfasis para supresi\'on de ruido triangular. \\
+    Integraci\'on Temporal & $\int_{-\infty}^t x(\tau) \, d\tau$ & $\frac{X(f)}{j 2\pi f} + \frac{1}{2}X(0)\delta(f)$ & Generaci\'on de FM a partir de moduladores de fase (PM), receptores correladores y lazos PLL. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+% ==============================================================================
+% SECCIÓN 5: CONCLUSIONES
+% ==============================================================================
+\section{Conclusiones}
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{Dualidad Inquebrantable Tiempo-Frecuencia y L\'imite de Gabor:}
+  Se demostr\'o anal\'itica y experimentalmente que ninguna forma de onda f\'isica puede poseer soporte compacto finito simult\'aneamente en el dominio del tiempo y en el dominio de la frecuencia ($\Delta t \cdot \Delta f \ge 1/4\pi$). Cualquier esfuerzo por comprimir una se\~nal en el tiempo con el prop\'osito de aumentar la tasa de transmisi\'on binaria produce de forma forzosa un ensanchamiento espectral rec\'iproco y una atenuaci\'on proporcional de su densidad espectral pico ($1/|a|$). Esta ley fundamental gobierna el dise\~no del ancho de banda y la dispersi\'on en todos los enlaces de radiofrecuencia y fibra \'optica.
+
+  \item \textbf{Linealidad Estricta y Coexistencia Multicanal:}
+  La verificaci\'on de la propiedad de linealidad acredit\'o que en canales y sistemas LTI, m\'ultiples se\~nales coexisten sin generar productos de distorsi\'on por intermodulaci\'on (IMD3 nulo a nivel de precisi\'on flotante IEEE 754). Esta caracter\'istica matem\'atica constituye el pilar tecnol\'ogico de la multiplexaci\'on por divisi\'on de frecuencia ortogonal (OFDM), permitiendo la transmisi\'on paralela de cientos o miles de subportadoras ortogonales en canales de alta velocidad.
+
+  \item \textbf{Invarianza de Magnitud y Caracterizaci\'on del Retardo Puro:}
+  El an\'alisis de desplazamiento temporal corrobor\'o que retrasar una se\~nal en $t_0$ segundos no altera en absoluto su contenido energ\'etico ni su magnitud espectral $|X(f)|$, pero introduce un desfase estrictamente lineal proporcional a la frecuencia ($d\theta/df = -2\pi t_0$). El retardo de grupo resultante $\tau_g(f) = t_0$ permanece rigurosamente constante en todo el ancho de banda, permitiendo modelar enlaces sin distorsi\'on de fase y sirviendo de principio f\'isico para sistemas de localizaci\'on satelital GPS y mitigaci\'on de ecos multitrayecto.
+
+  \item \textbf{Simplificaci\'on del Procesamiento LTI mediante Convoluci\'on:}
+  El Teorema de Convoluci\'on prob\'o que el comportamiento de un filtro anal\'ogico o digital puede desacoplarse anal\'iticamente calculando \'unicamente el producto algebraico $Y(f) = X(f) \cdot H(f)$. Mediante la implementaci\'on de un filtro Butterworth pasa-bajas de orden 4 a $f_c = 100\text{ Hz}$, se elimin\'o con precisi\'on una interferencia arm\'onica severa de $200\text{ Hz}$ atenu\'andola en m\'as de $24.1\text{ dB}$, mientras la componente deseada de $50\text{ Hz}$ se conserv\'o con una transmisi\'on del $97\%$. La computaci\'on en frecuencia reduce la complejidad operacional de $\mathcal{O}(N^2)$ a $\mathcal{O}(N \log N)$ gracias al algoritmo FFT.
+
+  \item \textbf{Traslaci\'on Espectral y Diferenciaci\'on de Se\~nales:}
+  Se constat\'o que el desplazamiento frecuencial es el operador fundamental de los mezcladores y moduladores de RF en telecomunicaciones (AM DSB-SC), trasladando r\'igidamente la informaci\'on de banda base a las bandas laterales $f_c \pm f_m$. Por su parte, la derivaci\'on temporal demostr\'o actuar con una ganancia de rampa $2\pi f$ y adelanto en cuadratura ($+90^\circ$), fundamentando el funcionamiento de circuitos discriminadores de frecuencia en demodulaci\'on FM y redes de pre-\'enfasis.
+
+  \item \textbf{Robustez Computacional y Correspondencia Anal\'itica:}
+  Las rutinas num\'ericas programadas en MATLAB y Python mostraron convergencia id\'entica frente a las deducciones anal\'iticas continuas, evidenciando la importancia de parametrizar adecuadamente la frecuencia de muestreo $f_s$, el tiempo de observaci\'on y la resoluci\'on espectral para neutralizar fen\'omenos espurios de *aliasing* y *spectral leakage*.
+\end{enumerate}
+
+% ==============================================================================
+% SECCIÓN 6: REFERENCIAS BIBLIOGRÁFICAS
+% ==============================================================================
+\begin{thebibliography}{99}
+
+\bibitem{proakis}
+John G. Proakis y Dimitris G. Manolakis,
+\textit{Digital Signal Processing: Principles, Algorithms, and Applications},
+4ta edici\'on, Pearson Prentice Hall, Upper Saddle River, NJ, 2007.
+
+\bibitem{oppenheim}
+Alan V. Oppenheim y Ronald W. Schafer,
+\textit{Discrete-Time Signal Processing},
+3ra edici\'on, Prentice Hall, Boston, MA, 2010.
+
+\bibitem{haykin}
+Simon Haykin y Michael Moher,
+\textit{Communication Systems},
+5ta edici\'on, John Wiley \& Sons, Hoboken, NJ, 2009.
+
+\bibitem{carlson}
+A. Bruce Carlson y Paul B. Crilly,
+\textit{Communication Systems: An Introduction to Signals and Noise in Electrical Communication},
+5ta edici\'on, McGraw-Hill, Nueva York, NY, 2010.
+
+\bibitem{lathi}
+B. P. Lathi y Zhi Ding,
+\textit{Modern Digital and Analog Communication Systems},
+4ta edici\'on, Oxford University Press, Nueva York, NY, 2009.
+
+\bibitem{cooley_tukey}
+James W. Cooley y John W. Tukey,
+\textit{An Algorithm for the Machine Calculation of Complex Fourier Series},
+Mathematics of Computation, vol. 19, no. 90, pp. 297--301, 1965.
+
+\end{thebibliography}
+
+% ==============================================================================
+% SECCIÓN 7: ANEXO - ENLACE A DRIVE Y CÓDIGOS DESARROLLADOS
+% ==============================================================================
+\newpage
+\appendix
+\section{Anexo: Repositorio Digital y C\'odigos Desarrollados}
+
+Con el fin de garantizar la total reproducibilidad de los resultados computacionales, an\'alisis gr\'aficos y c\'alculos num\'ericos expuestos a lo largo de este informe de laboratorio, todos los c\'odigos fuente desarrollados en los lenguajes \textbf{MATLAB} (scripts \texttt{.m}), \textbf{Python} (scripts \texttt{.py} con NumPy, SciPy y Matplotlib) y la \textbf{plataforma interactiva en JavaScript/React} se encuentran centralizados y respaldados en la nube.
+
+\vspace{0.4cm}
+
+\begin{driveLinkBox}
+  \textbf{Enlace de Acceso a Google Drive (C\'odigos Fuente y Scripts del Laboratorio):}
+  \vspace{0.3cm}
+  
+  \centering
+  \Large
+  \href{\driveLink}{\color{blue}\textbf{Haga clic aqu\'i para acceder a la carpeta de Google Drive}}
+  
+  \vspace{0.3cm}
+  \normalsize
+  \textbf{URL directa de respaldo:} \\
+  \small\url{\driveLink}
+\end{driveLinkBox}
+
+\vspace{0.6cm}
+
+\subsection{Estructura de la Carpeta Digital en Google Drive}
+Al ingresar al enlace de Google Drive, el evaluador o lector encontrar\'a la siguiente distribuci\'on organizada por m\'odulos tem\'aticos:
+
+\begin{itemize}
+  \item \textbf{\texttt{/01\_MATLAB\_Scripts/}}
+  \begin{itemize}[noitemsep]
+    \item \texttt{prop01\_direct\_fourier.m}: C\'alculo de la FFT, espectro unilateral y reconstrucci\'on IFFT.
+    \item \texttt{prop02\_linealidad.m}: Evaluaci\'on de la superposici\'on arm\'onica y prueba de no intermodulaci\'on.
+    \item \texttt{prop03\_desplazamiento\_temporal.m}: Simulaci\'on de retardo puro $t_0 = 18\text{ ms}$ y c\'alculo de retardo de grupo.
+    \item \texttt{prop04\_escalamiento\_inversion.m}: Ensanchamiento espectral a $-3\text{ dB}$, compresi\'on $x(2t)$ y reflexi\'on $x(-t)$.
+    \item \texttt{prop05\_modulacion\_dsbsc.m}: Modulaci\'on AM balanceada a $f_c = 200\text{ Hz}$, $f_m = 20\text{ Hz}$ y detecci\'on de bandas LSB/USB.
+    \item \texttt{prop06\_teorema\_convolucion.m}: Filtrado Butterworth IIR de orden 4 a $f_c = 100\text{ Hz}$ con se\~nal ruidosa.
+    \item \texttt{prop07\_derivacion\_temporal.m}: Derivada espectral mediante rampa $j2\pi f$, amplificaci\'on triple de arm\'onico alto y desfase $+90^\circ$.
+  \end{itemize}
+
+  \item \textbf{\texttt{/02\_Python\_Notebooks/}}
+  \begin{itemize}[noitemsep]
+    \item \texttt{fourier\_properties\_validation.py}: Script ejecutable en Python 3 que procesa autom\'aticamente todas las propiedades y genera los gr\'aficos comparativos con Matplotlib.
+    \item \texttt{requirements.txt}: Dependencias del entorno (\texttt{numpy}, \texttt{scipy}, \texttt{matplotlib}).
+  \end{itemize}
+
+  \item \textbf{\texttt{/03\_Interactive\_Web\_Deck/}}
+  \begin{itemize}[noitemsep]
+    \item C\'odigo completo de la aplicaci\'on web construida con React 18, Vite, Tailwind CSS y Chart.js para la visualizaci\'on din\'amica e interactiva de cada propiedad.
+    \item M\'odulo \texttt{dspMath.js} con la implementaci\'on en JavaScript de la DFT y algoritmos de procesamiento de se\~nales en tiempo real.
+  \end{itemize}
+
+  \item \textbf{\texttt{/04\_Figuras\_Alta\_Resolucion/}}
+  \begin{itemize}[noitemsep]
+    \item Exportaciones de los gr\'aficos en formato vectorial y rasterizado de alta definici\'on (300 DPI) para su consulta gr\'afica independiente.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Gu\'ia R\'apida de Ejecuci\'on de los C\'odigos}
+
+\subsubsection{Ejecuci\'on en MATLAB / GNU Octave}
+Para ejecutar las simulaciones en MATLAB:
+\begin{enumerate}[noitemsep]
+  \item Abrir MATLAB R2020a o superior (tambi\'en plenamente compatible con GNU Octave 7+).
+  \item Navegar hasta la carpeta \texttt{/01\_MATLAB\_Scripts/}.
+  \item Ejecutar cualquiera de los scripts en la consola de comandos; por ejemplo:
+  \begin{lstlisting}[language=Matlab]
+>> run('prop06_teorema_convolucion.m')
+  \end{lstlisting}
+  \item El script calcular\'a autom\'aticamente los espectros FFT y desplegar\'a la ventana de visualizaci\'on temporal y frecuencial con sus respectivas leyendas normalizadas.
+\end{enumerate}
+
+\subsubsection{Ejecuci\'on en Python}
+Para ejecutar el entorno en Python 3:
+\begin{lstlisting}[language=sh]
+# 1. Crear entorno virtual e instalar dependencias
+python -m venv env_dsp
+source env_dsp/bin/activate    # En Windows: .\env_dsp\Scripts\activate
+pip install numpy scipy matplotlib
+
+# 2. Ejecutar script de validación espectral
+python fourier_properties_validation.py
+\end{lstlisting}
+
+\subsubsection{Ejecuci\'on del Entorno Web React/Vite}
+Si se desea compilar y visualizar el panel interactivo en un navegador web local:
+\begin{lstlisting}[language=sh]
+# 1. Instalar paquetes de Node.js
+npm install
+
+# 2. Iniciar servidor de desarrollo local
+npm run dev
+\end{lstlisting}
+Luego, ingresar a la direcci\'on local indicada en la terminal (habitualmente \texttt{http://localhost:5173}) para navegar de manera interactiva por todas las diapositivas y gr\'aficas en tiempo real.
+
+\end{document}

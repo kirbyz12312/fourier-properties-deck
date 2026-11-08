@@ -1,0 +1,6 @@
+# Dependencias de Python para la verificación de propiedades de Fourier
+# UNSA - EPIT | Procesamiento Digital de Señales
+numpy>=1.22.0
+scipy>=1.8.0
+matplotlib>=3.5.0
+
