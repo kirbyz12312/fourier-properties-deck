@@ -439,7 +439,7 @@ subplot(2,1,2); stem(f(1:150), P1(1:150), 'c', 'LineWidth', 1.5);
 grid on; xlabel('Frecuencia (Hz)'); ylabel('|X(f)|');
 \end{lstlisting}
 
-\begin{lstlisting}[language=Python, caption={Cálculo y graficación del espectro de Fourier en Python (NumPy).}]
+\begin{lstlisting}[language=Python, caption={Cálculo y graficación del espectro de Fourier en Python (NumPy/Matplotlib).}]
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -453,8 +453,17 @@ X = np.fft.rfft(x, n=Nfft)
 freqs = np.fft.rfftfreq(Nfft, d=1/fs)
 magnitude = np.abs(X) * (2.0 / len(t))
 
-print(f">> Pico fundamental detectado en: {freqs[np.argmax(magnitude)]:.2f} Hz")
-print(f">> Amplitud espectral calculada: {np.max(magnitude):.4f} V")
+# Visualización y Graficación
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 5))
+ax1.plot(t * 1000, x, color='#3b82f6', lw=1.8)
+ax1.set(xlabel='Tiempo (ms)', ylabel='Amplitud', title='Señal x(t) = cos(2π·50t)')
+ax1.grid(True, alpha=0.3)
+
+ax2.plot(freqs[:100], magnitude[:100], color='#06b6d4', lw=2)
+ax2.set(xlabel='Frecuencia (Hz)', ylabel='|X(f)|', title='Espectro Unilateral de Magnitud')
+ax2.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
 \end{lstlisting}
 
 \begin{dspResultBox}{Transformada Directa e Inversa}
@@ -497,7 +506,7 @@ El operador de Fourier es intr\'insecamente lineal. Para la suma $x_{\text{suma}
 
 \subsubsection{Implementaci\'on en MATLAB y Python}
 
-\begin{lstlisting}[language=Matlab, caption={Validación de la propiedad de linealidad en MATLAB.}]
+\begin{lstlisting}[language=Matlab, caption={Validación y graficación de la propiedad de linealidad en MATLAB.}]
 fs = 1000; t = 0:1/fs:0.12;
 f1 = 50;  a = 1.0;  x1 = a * cos(2*pi*f1*t);
 f2 = 120; b = 0.7;  x2 = b * cos(2*pi*f2*t);
@@ -509,13 +518,28 @@ X2 = abs(fft(x2, N)/length(t))*2;
 X_suma = abs(fft(x_suma, N)/length(t))*2;
 f = (0:N/2) * (fs/N);
 
-% Verificación de error de superposición
-error_linealidad = max(abs(X_suma - (X1 + X2)));
-fprintf('Error numérico de linealidad: %.2e V\n', error_linealidad);
+% Visualización y Graficación
+figure;
+subplot(2,1,1);
+plot(t*1000, x_suma, 'Color', [0.1, 0.6, 0.2], 'LineWidth', 1.6); hold on;
+plot(t*1000, x1, 'b--', 'LineWidth', 1.0);
+plot(t*1000, x2, 'r:', 'LineWidth', 1.0);
+grid on; xlabel('Tiempo (ms)'); ylabel('Amplitud (V)');
+title('Dominio del Tiempo: Superposición x_{suma}(t) = x_1(t) + x_2(t)');
+legend('x_{suma}(t)', 'x_1(t) [50 Hz]', 'x_2(t) [120 Hz]');
+
+subplot(2,1,2);
+plot(f(1:120), X_suma(1:120), 'Color', [0.1, 0.6, 0.2], 'LineWidth', 2); hold on;
+plot(f(1:120), X1(1:120), 'b--', 'LineWidth', 1.5);
+plot(f(1:120), X2(1:120), 'r:', 'LineWidth', 1.5);
+legend('|X_{suma}|', '|X_1|', '|X_2|'); grid on;
+xlabel('Frecuencia (Hz)'); ylabel('Magnitud |X(f)|');
+title('Linealidad Espectral: F{a x_1 + b x_2} = a X_1 + b X_2');
 \end{lstlisting}
 
-\begin{lstlisting}[language=Python, caption={Comprobación de no intermodulación en Python.}]
+\begin{lstlisting}[language=Python, caption={Comprobación y graficación de linealidad en Python (NumPy/Matplotlib).}]
 import numpy as np
+import matplotlib.pyplot as plt
 
 fs = 1000
 t = np.linspace(0, 0.12, int(fs * 0.12), endpoint=False)
@@ -529,8 +553,21 @@ X1_mag = np.abs(np.fft.rfft(x1, Nfft)) * (2.0 / len(t))
 X2_mag = np.abs(np.fft.rfft(x2, Nfft)) * (2.0 / len(t))
 X_sum_mag = np.abs(np.fft.rfft(x_sum, Nfft)) * (2.0 / len(t))
 
-error = np.max(np.abs(X_sum_mag - (X1_mag + X2_mag)))
-print(f"Error máximo de superposición: {error:.4e} V")
+# Visualización y Graficación
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 5))
+ax1.plot(t * 1000, x_sum, color='#10b981', lw=1.8, label=r'$x_{suma}(t)$')
+ax1.plot(t * 1000, x1, color='#3b82f6', lw=1.2, ls='--', label=r'$x_1(t)$ [50 Hz]')
+ax1.plot(t * 1000, x2, color='#f59e0b', lw=1.2, ls=':', label=r'$x_2(t)$ [120 Hz]')
+ax1.set(xlabel='Tiempo (ms)', ylabel='Amplitud (V)', title='Dominio del Tiempo: Superposición x₁(t) + x₂(t)')
+ax1.grid(True, alpha=0.3); ax1.legend(loc='upper right')
+
+ax2.plot(freqs[:120], X_sum_mag[:120], color='#10b981', lw=2.2, label=r'$|X_{suma}(f)|$')
+ax2.plot(freqs[:120], X1_mag[:120], color='#3b82f6', lw=1.2, ls='--', label=r'$|X_1(f)|$')
+ax2.plot(freqs[:120], X2_mag[:120], color='#f59e0b', lw=1.2, ls=':', label=r'$|X_2(f)|$')
+ax2.set(xlabel='Frecuencia (Hz)', ylabel='Magnitud |X(f)|', title='Dominio Frecuencial: Suma Lineal de Espectros')
+ax2.grid(True, alpha=0.3); ax2.legend(loc='upper right')
+plt.tight_layout()
+plt.show()
 \end{lstlisting}
 
 \begin{dspResultBox}{Linealidad y Superposici\'on}
@@ -580,7 +617,7 @@ Separando la ecuaci\'on~(\ref{eq:time_shift}) en m\'odulo y fase:
 
 \subsubsection{Implementaci\'on en MATLAB y Python}
 
-\begin{lstlisting}[language=Matlab, caption={Análisis de retardo de fase y retardo de grupo en MATLAB.}]
+\begin{lstlisting}[language=Matlab, caption={Análisis y graficación del retardo de fase y retardo de grupo en MATLAB.}]
 fs = 1000; t = 0:1/fs:0.1;
 t0 = 0.018; tc = 0.035; sigma = 0.007;
 
@@ -593,28 +630,58 @@ f = (0:N/2)*(fs/N);
 
 mag_orig = abs(X(1:N/2+1));
 mag_del  = abs(X_del(1:N/2+1));
-diff_mag = max(abs(mag_orig - mag_del));
-fprintf('Diferencia máxima en magnitud espectral: %.2e\n', diff_mag);
-
-% Cálculo de la pendiente de fase teórica vs numérica
 phase_diff = unwrap(angle(X_del(1:N/2+1))) - unwrap(angle(X(1:N/2+1)));
-pend_teorica = -2*pi*t0; % -0.1131 rad/Hz
-fprintf('Pendiente teórica: %.4f rad/Hz\n', pend_teorica);
+pend_teorica = -2*pi*t0;
+
+% Visualización y Graficación
+figure;
+subplot(2,1,1);
+plot(f(1:60), mag_orig(1:60), 'b', 'LineWidth', 2); hold on;
+plot(f(1:60), mag_del(1:60), 'r--', 'LineWidth', 1.5);
+grid on; xlabel('Frecuencia (Hz)'); ylabel('Magnitud |X(f)|');
+title('Magnitud Espectral: |X(f)| Invariante al Retardo');
+legend('Original', 'Retardada (t_0 = 18 ms)');
+
+subplot(2,1,2);
+plot(f(1:60), phase_diff(1:60), 'm', 'LineWidth', 2); hold on;
+plot(f(1:60), pend_teorica*f(1:60), 'k--', 'LineWidth', 1.2);
+grid on; xlabel('Frecuencia (Hz)'); ylabel('Fase \angle X(f) (rad)');
+title('Fase Espectral: Desfase Lineal con Pendiente d\theta/df = -2\pi\cdott_0');
+legend('Fase Calculada', 'Pendiente Teórica (-2\pi\cdot 0.018)');
 \end{lstlisting}
 
-\begin{lstlisting}[language=Python, caption={Comprobación del retardo de grupo constante en Python.}]
+\begin{lstlisting}[language=Python, caption={Comprobación y graficación del retardo temporal en Python (NumPy/Matplotlib).}]
 import numpy as np
+import matplotlib.pyplot as plt
 
 fs = 1000
-t0 = 0.018  # 18 ms
-freqs = np.linspace(1, 100, 50)
-# Desfase lineal estricto
-phase_delay = -2 * np.pi * freqs * t0
-# Retardo de grupo numérico tg = -1/(2pi) * d(phi)/df
-group_delay = -np.gradient(phase_delay, freqs) / (2 * np.pi)
+t = np.linspace(0, 0.1, 100)
+tc = 0.035   # 35 ms
+t0 = 0.018   # Retardo de 18 ms
+sigma = 0.007
 
-print(f"Retardo de grupo medio: {np.mean(group_delay)*1000:.2f} ms")
-print(f"Varianza del retardo de grupo: {np.var(group_delay):.2e} (Fase lineal ideal)")
+# Señales gaussianas en el tiempo
+x_orig = np.exp(-((t - tc)**2) / (2 * sigma**2))
+x_delay = np.exp(-((t - (tc + t0))**2) / (2 * sigma**2))
+
+# Frecuencias analíticas y fase lineal
+freqs = np.linspace(0, 120, 60)
+mag = np.exp(-2 * (np.pi * sigma * freqs)**2)
+phase_orig = np.zeros_like(freqs)
+phase_delay = -2 * np.pi * freqs * t0  # Pendiente lineal
+
+# Visualización y Graficación
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 5))
+ax1.plot(freqs, mag, color='#06b6d4', lw=2, label='|X(f)| (Ambas curvas idénticas)')
+ax1.set(xlabel='Frecuencia (Hz)', ylabel='Magnitud |X(f)|', title='Magnitud Espectral: Invariante al Retardo')
+ax1.grid(True, alpha=0.3); ax1.legend(loc='upper right')
+
+ax2.plot(freqs, phase_delay, color='#ec4899', lw=2, label=r'Fase Retardada: $-2\pi f t_0$')
+ax2.plot(freqs, phase_orig, color='#64748b', lw=1.2, ls='--', label='Fase Original (0 rad)')
+ax2.set(xlabel='Frecuencia (Hz)', ylabel='Fase ∠X(f) (rad)', title='Fase Espectral: Desfase Lineal con Pendiente -2π·t₀')
+ax2.grid(True, alpha=0.3); ax2.legend(loc='upper right')
+plt.tight_layout()
+plt.show()
 \end{lstlisting}
 
 \begin{dspResultBox}{Desplazamiento Temporal y Retardo de Grupo}
@@ -677,7 +744,7 @@ Si la se\~nal $x(t)$ es real, se cumple la propiedad herm\'itica $X(-f) = X^*(f)
 
 \subsubsection{Implementaci\'on en MATLAB y Python}
 
-\begin{lstlisting}[language=Matlab, caption={Comprobación de la reciprocidad tiempo-frecuencia en MATLAB.}]
+\begin{lstlisting}[language=Matlab, caption={Comprobación y graficación de la reciprocidad tiempo-frecuencia en MATLAB.}]
 fs = 1000; t = -0.1:1/fs:0.1;
 tau = 0.015;
 pulse = @(time) (time >= 0) .* (time/tau) .* exp(1 - time/tau);
@@ -690,18 +757,27 @@ N = 1024; f = (0:N/2)*(fs/N);
 X_orig = abs(fft(x_orig, N));
 X_comp = abs(fft(x_comp, N));
 
-% Medición de Ancho de Banda a -3 dB
-BW_orig = f(find(X_orig(1:N/2+1) <= max(X_orig)/sqrt(2), 1));
-BW_comp = f(find(X_comp(1:N/2+1) <= max(X_comp)/sqrt(2), 1));
+% Visualización y Graficación
+figure;
+subplot(2,1,1);
+plot(t*1000, x_orig, 'b', 'LineWidth', 1.6); hold on;
+plot(t*1000, x_comp, 'Color', [0.9, 0.4, 0.0], 'LineWidth', 1.6);
+plot(t*1000, x_inv, 'Color', [0.1, 0.6, 0.3], 'LineWidth', 1.4);
+grid on; xlabel('Tiempo (ms)'); ylabel('Amplitud');
+title('Dominio del Tiempo: x(t) vs x(2t) Comprimida vs x(-t) Invertida');
+legend('Original', 'Comprimida (a=2)', 'Invertida (a=-1)'); xlim([-40 60]);
 
-fprintf('BW Original (-3dB): %.1f Hz\n', BW_orig);
-fprintf('BW Comprimido (-3dB): %.1f Hz (Ratio: %.2f)\n', BW_comp, BW_comp/BW_orig);
-fprintf('Amplitud pico comprimido / original: %.4f (Teórico: 0.5000)\n', ...
-    max(X_comp)/max(X_orig));
+subplot(2,1,2);
+plot(f(1:120), X_orig(1:120), 'b', 'LineWidth', 1.8); hold on;
+plot(f(1:120), X_comp(1:120), 'Color', [0.9, 0.4, 0.0], 'LineWidth', 1.8);
+grid on; xlabel('Frecuencia (Hz)'); ylabel('Magnitud |X(f)|');
+title('Dominio Frecuencia: Duplicación de Ancho de Banda y Reducción 1/|a| = 0.5');
+legend('|X_{orig}(f)|', '|X_{comp}(f)| [BW x2, Amp /2]'); xlim([0 70]);
 \end{lstlisting}
 
-\begin{lstlisting}[language=Python, caption={Simulación de escalamiento e inversión temporal en Python.}]
+\begin{lstlisting}[language=Python, caption={Simulación y graficación de escalamiento e inversión en Python (NumPy/Matplotlib).}]
 import numpy as np
+import matplotlib.pyplot as plt
 
 tau = 0.015
 def asymmetric_pulse(t):
@@ -709,17 +785,29 @@ def asymmetric_pulse(t):
 
 t = np.linspace(-0.08, 0.08, 500)
 x_orig = asymmetric_pulse(t)
-x_comp = asymmetric_pulse(2 * t)
+x_comp = asymmetric_pulse(2 * t)  # Factor a = 2
+x_inv = asymmetric_pulse(-t)      # Factor a = -1
 
 # En frecuencia analítica
 freqs = np.linspace(0, 100, 100)
-w = 2 * np.pi * freqs
-K = np.e / tau; w0 = 1 / tau
+K = np.e / tau; w0 = 1 / tau; w = 2 * np.pi * freqs
 X_orig_mag = (K / (w0**2 + w**2))
 X_comp_mag = 0.5 * (K / (w0**2 + (w/2)**2))
 
-print(f">> Amplitud pico original: {X_orig_mag[0]:.2f}")
-print(f">> Amplitud pico comprimido: {X_comp_mag[0]:.2f} (Exactamente 50%)")
+# Visualización y Graficación
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 5))
+ax1.plot(t * 1000, x_orig, color='#3b82f6', lw=1.8, label='x(t) Original [a=1]')
+ax1.plot(t * 1000, x_comp, color='#f97316', lw=1.8, label='x(2t) Comprimida [a=2]')
+ax1.plot(t * 1000, x_inv, color='#10b981', lw=1.5, ls='--', label='x(-t) Invertida [a=-1]')
+ax1.set(xlabel='Tiempo (ms)', ylabel='Amplitud', title='Dominio del Tiempo: Escalamiento e Inversión')
+ax1.set_xlim([-40, 60]); ax1.grid(True, alpha=0.3); ax1.legend(loc='upper right')
+
+ax2.plot(freqs, X_orig_mag, color='#3b82f6', lw=2, label='|X_orig(f)|')
+ax2.plot(freqs, X_comp_mag, color='#f97316', lw=2, label=r'|X_comp(f)| [BW x2, Amp /2]')
+ax2.set(xlabel='Frecuencia (Hz)', ylabel='Densidad Espectral |X(f)|', title='Dominio Frecuencial: Reciprocidad Tiempo-Frecuencia')
+ax2.set_xlim([0, 70]); ax2.grid(True, alpha=0.3); ax2.legend(loc='upper right')
+plt.tight_layout()
+plt.show()
 \end{lstlisting}
 
 \begin{dspResultBox}{Escalamiento e Inversi\'on}
@@ -767,7 +855,7 @@ Si el mensaje $x(t)$ es un tono de frecuencia $f_m$, el espectro trasladado pres
 
 \subsubsection{Implementaci\'on en MATLAB y Python}
 
-\begin{lstlisting}[language=Matlab, caption={Modulación DSB-SC y traslación espectral en MATLAB.}]
+\begin{lstlisting}[language=Matlab, caption={Modulación DSB-SC y graficación de traslación espectral en MATLAB.}]
 fs = 2000; t = 0:1/fs:0.08;
 fm = 20;   fc = 200;
 
@@ -779,15 +867,26 @@ N = 1024;
 S_fft = abs(fft(s, N)/length(t))*2;
 f = (0:N/2)*(fs/N);
 
-f_lsb = fc - fm;  % 180 Hz
-f_usb = fc + fm;  % 220 Hz
-fprintf('Portadora nominal: %d Hz\n', fc);
-fprintf('Banda Lateral Inferior (LSB): %d Hz | Superior (USB): %d Hz\n', ...
-    f_lsb, f_usb);
+% Visualización y Graficación
+figure;
+subplot(2,1,1);
+plot(t*1000, s, 'Color', [0.1, 0.4, 0.8], 'LineWidth', 1.5); hold on;
+plot(t*1000, m, 'r--', 'LineWidth', 1.2);
+plot(t*1000, -m, 'r--', 'LineWidth', 1.2);
+grid on; xlabel('Tiempo (ms)'); ylabel('Amplitud s(t)');
+title('Señal Modulada AM DSB-SC s(t) = m(t) \cdot cos(2\pi \cdot 200t)');
+legend('s(t) Modulada', 'Envolvente \pm m(t)');
+
+subplot(2,1,2);
+stem(f(1:180), S_fft(1:180), 'r', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
+grid on; xlabel('Frecuencia (Hz)'); ylabel('Magnitud |S(f)|');
+title('Espectro: Bandas Laterales en 180 Hz y 220 Hz (Portadora Suprimida)');
+xlim([140 260]);
 \end{lstlisting}
 
-\begin{lstlisting}[language=Python, caption={Simulación y detección de bandas laterales en Python.}]
+\begin{lstlisting}[language=Python, caption={Simulación y graficación de modulación AM en Python (NumPy/Matplotlib).}]
 import numpy as np
+import matplotlib.pyplot as plt
 
 fs = 2000
 t = np.arange(0, 0.08, 1/fs)
@@ -801,9 +900,19 @@ Nfft = 1024
 freqs = np.fft.rfftfreq(Nfft, 1/fs)
 S_mag = np.abs(np.fft.rfft(s_mod, Nfft)) * (2.0 / len(t))
 
-peak_idx = np.where(S_mag > 0.4)[0]
-for idx in peak_idx:
-    print(f">> Banda activa: {freqs[idx]:.1f} Hz -> Amplitud = {S_mag[idx]:.3f} V")
+# Visualización y Graficación
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 5))
+ax1.plot(t * 1000, s_mod, color='#0284c7', lw=1.6, label=r'$s(t) = m(t)\cos(2\pi \cdot 200t)$')
+ax1.plot(t * 1000, m, color='#ef4444', lw=1.1, ls='--', alpha=0.8, label=r'Envolvente $+m(t)$')
+ax1.plot(t * 1000, -m, color='#ef4444', lw=1.1, ls='--', alpha=0.8, label=r'Envolvente $-m(t)$')
+ax1.set(xlabel='Tiempo (ms)', ylabel='Amplitud s(t)', title='Dominio del Tiempo: Señal Modulada AM DSB-SC')
+ax1.grid(True, alpha=0.3); ax1.legend(loc='upper right')
+
+ax2.stem(freqs[:160], S_mag[:160], linefmt='#ef4444', markerfmt='ro', basefmt=' ')
+ax2.set(xlabel='Frecuencia (Hz)', ylabel='Magnitud |S(f)|', title='Dominio Frecuencial: Bandas Laterales en 180 Hz y 220 Hz')
+ax2.set_xlim([140, 260]); ax2.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
 \end{lstlisting}
 
 \begin{dspResultBox}{Desplazamiento Frecuencial y Modulaci\'on}
@@ -855,7 +964,7 @@ El Teorema de Convoluci\'on demuestra que una operaci\'on integral en el tiempo 
 
 \subsubsection{Implementaci\'on en MATLAB y Python}
 
-\begin{lstlisting}[language=Matlab, caption={Filtrado Butterworth mediante convolución en MATLAB.}]
+\begin{lstlisting}[language=Matlab, caption={Filtrado Butterworth mediante convolución y graficación en MATLAB.}]
 fs = 2000; t = 0:1/fs:0.08;
 x_in = sin(2*pi*50*t) + 0.65*sin(2*pi*200*t);
 
@@ -869,31 +978,61 @@ y_out = filter(b, a, x_in);
 N = 1024; f = (0:N/2)*(fs/N);
 X_in = abs(fft(x_in, N)/length(t))*2;
 Y_out = abs(fft(y_out, N)/length(t))*2;
-
-% Respuesta analítica de magnitud: |H(f)| = 1 / sqrt(1 + (f/fc)^(2n))
 H_mag = 1 ./ sqrt(1 + (f/fc).^(2*order));
-fprintf('Ganancia en 50 Hz: %.4f (%.2f dB)\n', ...
-    H_mag(find(f>=50,1)), 20*log10(H_mag(find(f>=50,1))));
-fprintf('Atenuación en 200 Hz: %.4f (%.2f dB)\n', ...
-    H_mag(find(f>=200,1)), 20*log10(H_mag(find(f>=200,1))));
+
+% Visualización y Graficación
+figure;
+subplot(2,1,1);
+plot(t*1000, x_in, 'r', 'LineWidth', 1.2); hold on;
+plot(t*1000, y_out, 'Color', [0.1, 0.6, 0.2], 'LineWidth', 2);
+grid on; xlabel('Tiempo (ms)'); ylabel('Amplitud (V)');
+title('Dominio del Tiempo: Entrada x(t) vs Salida Filtrada y(t) = x(t)*h(t)');
+legend('x_{in}(t) [50 Hz + 200 Hz]', 'y_{out}(t) [Filtrada limpia]');
+
+subplot(2,1,2);
+plot(f(1:160), X_in(1:160), 'r--', 'LineWidth', 1.2); hold on;
+plot(f(1:160), Y_out(1:160), 'Color', [0.1, 0.6, 0.2], 'LineWidth', 2.2);
+plot(f(1:160), H_mag(1:160), 'b', 'LineWidth', 1.5);
+grid on; xlabel('Frecuencia (Hz)'); ylabel('Magnitud');
+title('Dominio Frecuencial: Y(f) = X(f) \cdot H(f) (Butterworth fc = 100 Hz)');
+legend('|X_{in}(f)|', '|Y_{out}(f)|', '|H(f)| Analítico'); xlim([0 250]);
 \end{lstlisting}
 
-\begin{lstlisting}[language=Python, caption={Convolución y filtrado con SciPy en Python.}]
+\begin{lstlisting}[language=Python, caption={Convolución, filtrado y graficación con SciPy en Python.}]
 import numpy as np
 from scipy import signal
+import matplotlib.pyplot as plt
 
 fs = 2000
 t = np.arange(0, 0.08, 1/fs)
 x = np.sin(2 * np.pi * 50 * t) + 0.65 * np.sin(2 * np.pi * 200 * t)
 
-b, a = signal.butter(4, 100 / (fs / 2), btype='low')
+# Filtro Butterworth pasa-bajos orden 4 a 100 Hz
+f_c = 100.0
+b, a = signal.butter(4, f_c / (fs / 2), btype='low')
 y = signal.lfilter(b, a, x)
 
-fc = 100.0
-gain_50 = 1 / np.sqrt(1 + (50 / fc)**8)
-gain_200 = 1 / np.sqrt(1 + (200 / fc)**8)
-print(f"Ganancia en tono deseado (50 Hz): {gain_50:.4f} (-{20*np.log10(1/gain_50):.2f} dB)")
-print(f"Atenuación en ruido (200 Hz): {gain_200:.4f} (-{20*np.log10(1/gain_200):.2f} dB)")
+# Transformada espectral
+Nfft = 1024
+freqs = np.fft.rfftfreq(Nfft, 1/fs)
+X_mag = np.abs(np.fft.rfft(x, Nfft)) * (2.0 / len(t))
+Y_mag = np.abs(np.fft.rfft(y, Nfft)) * (2.0 / len(t))
+H_mag = 1.0 / np.sqrt(1 + (freqs / f_c)**8)
+
+# Visualización y Graficación
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 5))
+ax1.plot(t * 1000, x, color='#ef4444', lw=1.2, alpha=0.7, label=r'Entrada $x(t)$ [50 Hz + 200 Hz]')
+ax1.plot(t * 1000, y, color='#10b981', lw=2.0, label=r'Salida Filtrada $y(t) = x(t)*h(t)$')
+ax1.set(xlabel='Tiempo (ms)', ylabel='Amplitud (V)', title='Dominio del Tiempo: Filtrado Butterworth LPF')
+ax1.grid(True, alpha=0.3); ax1.legend(loc='upper right')
+
+ax2.plot(freqs[:160], X_mag[:160], color='#ef4444', lw=1.2, ls='--', label=r'$|X_{in}(f)|$')
+ax2.plot(freqs[:160], Y_mag[:160], color='#10b981', lw=2.2, label=r'$|Y_{out}(f)|$')
+ax2.plot(freqs[:160], H_mag[:160], color='#0284c7', lw=1.5, label=r'$|H(f)|$ Butterworth')
+ax2.set(xlabel='Frecuencia (Hz)', ylabel='Magnitud', title='Dominio Frecuencial: Y(f) = X(f) · H(f)')
+ax2.set_xlim([0, 250]); ax2.grid(True, alpha=0.3); ax2.legend(loc='upper right')
+plt.tight_layout()
+plt.show()
 \end{lstlisting}
 
 \begin{dspResultBox}{Teorema de Convoluci\'on y Filtrado}
@@ -956,7 +1095,7 @@ Donde el t\'ermino $\frac{1}{2}X(0)\delta(f)$ preserva el valor promedio (nivel 
 
 \subsubsection{Implementaci\'on en MATLAB y Python}
 
-\begin{lstlisting}[language=Matlab, caption={Validación de derivación temporal en el dominio frecuencial en MATLAB.}]
+\begin{lstlisting}[language=Matlab, caption={Validación de derivación temporal y graficación en MATLAB.}]
 fs = 1000; t = 0:1/fs:0.15;
 f1 = 15; a1 = 1.0;
 f2 = 45; a2 = 0.45;
@@ -973,25 +1112,57 @@ f(f > fs/2) = f(f > fs/2) - fs; % Frecuencias centradas con signo
 dX_espectral = 1i * 2 * pi * f .* X;
 dx_recuperada = real(ifft(dX_espectral));
 
-error_derivada = max(abs(dx_analitica - dx_recuperada));
-fprintf('Error máximo entre derivación analítica y espectral: %.2e\n', error_derivada);
+% Visualización y Graficación
+figure;
+subplot(2,1,1);
+plot(t*1000, x, 'b', 'LineWidth', 1.5); hold on;
+plot(t*1000, dx_recuperada / (2*pi*f2), 'r', 'LineWidth', 1.8);
+grid on; xlabel('Tiempo (ms)'); ylabel('Amplitud');
+title('Dominio Temporal: x(t) Original vs Derivada dx/dt (Normalizada)');
+legend('x(t) [15 Hz + 45 Hz]', 'dx/dt Normalizada');
+
+subplot(2,1,2);
+f_plot = (0:N/2)*(fs/N);
+X_mag = abs(fft(x))/N*2;
+dX_mag = abs(dX_espectral)/N*2;
+plot(f_plot(1:60), X_mag(1:60), 'b', 'LineWidth', 1.5); hold on;
+plot(f_plot(1:60), dX_mag(1:60)/(2*pi*f2), 'r', 'LineWidth', 1.8);
+grid on; xlabel('Frecuencia (Hz)'); ylabel('Magnitud');
+title('Dominio Frecuencial: Amplificación 3x del Armónico de 45 Hz vs 15 Hz');
+legend('|X(f)| Original', '|j2\pi f \cdot X(f)| Derivada'); xlim([0 60]);
 \end{lstlisting}
 
-\begin{lstlisting}[language=Python, caption={Cálculo de la ganancia diferencial proporcional a la frecuencia en Python.}]
+\begin{lstlisting}[language=Python, caption={Derivación temporal y graficación de ganancia en rampa en Python.}]
 import numpy as np
+import matplotlib.pyplot as plt
 
+fs = 1000
+t = np.arange(0, 0.15, 1/fs)
 f1, f2 = 15.0, 45.0
-a1, a2 = 1.0, 0.45
+x = np.sin(2 * np.pi * f1 * t) + 0.45 * np.sin(2 * np.pi * f2 * t)
 
-# En la señal temporal original:
-relacion_in = a2 / a1  # 0.45
+# Derivada exacta en el tiempo
+dx_dt = 2*np.pi*f1*np.cos(2*np.pi*f1*t) + 0.45*2*np.pi*f2*np.cos(2*np.pi*f2*t)
 
-# En la derivada: ganancia k1 = 2*pi*15, ganancia k2 = 2*pi*45
-ganancia_relativa = f2 / f1  # Exactamente 3.0x
-relacion_out = (a2 * 2 * np.pi * f2) / (a1 * 2 * np.pi * f1)
+# Espectros
+Nfft = len(t)
+X_mag = np.abs(np.fft.rfft(x, Nfft)) * (2.0 / Nfft)
+dX_mag = np.abs(np.fft.rfft(dx_dt, Nfft)) * (2.0 / Nfft)
+freqs = np.fft.rfftfreq(Nfft, 1/fs)
 
-print(f">> Relación de amplitudes en x(t): {relacion_in:.2f}")
-print(f">> Relación de amplitudes en dx/dt: {relacion_out:.2f} (Amplificación por factor 3.00x)")
+# Visualización y Graficación
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 5))
+ax1.plot(t * 1000, x, color='#3b82f6', lw=1.6, label=r'Señal $x(t)$ [15 Hz + 45 Hz]')
+ax1.plot(t * 1000, dx_dt / (2*np.pi*f2), color='#ef4444', lw=1.8, label=r'Derivada $\frac{dx}{dt}$ (Normalizada)')
+ax1.set(xlabel='Tiempo (ms)', ylabel='Amplitud', title='Dominio Temporal: x(t) vs Derivada')
+ax1.grid(True, alpha=0.3); ax1.legend(loc='upper right')
+
+ax2.plot(freqs[:30], X_mag[:30], color='#3b82f6', lw=1.6, label=r'$|X(f)|$ Original')
+ax2.plot(freqs[:30], dX_mag[:30] / (2*np.pi*f2), color='#ef4444', lw=1.8, label=r'$|j2\pi f \cdot X(f)|$ Derivada')
+ax2.set(xlabel='Frecuencia (Hz)', ylabel='Magnitud Normalizada', title='Dominio Frecuencial: Ganancia Lineal 2πf')
+ax2.set_xlim([0, 60]); ax2.grid(True, alpha=0.3); ax2.legend(loc='upper right')
+plt.tight_layout()
+plt.show()
 \end{lstlisting}
 
 \begin{dspResultBox}{Derivaci\'on Temporal y Respuesta en Cuadratura}
